@@ -3,12 +3,13 @@ info:
   title: Quota Management API
   version: 1.0.0
 paths:
-  /quota/users/{usernameToBeUsed}:
+  /quota/users/{username}:
     get:
       summary: Get the quota for a user
+      operationId: getQuota
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -20,9 +21,10 @@ paths:
 
     put:
       summary: Update the quota for a user
+      operationId: updateQuota
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -49,12 +51,13 @@ paths:
         '404':
           description: The user does not exist
 
-  /quota/users/{usernameToBeUsed}/count:
+  /quota/users/{username}/count:
     get:
       summary: Get the quota count for a user
+      operationId: getQuotaCount
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -68,9 +71,10 @@ paths:
 
     put:
       summary: Update the quota count for a user
+      operationId: updateQuotaCount
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -93,9 +97,10 @@ paths:
 
     delete:
       summary: Delete the quota count for a user
+      operationId: deleteQuotaCount
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -105,12 +110,13 @@ paths:
         '404':
           description: The user does not exist
 
-  /quota/users/{usernameToBeUsed}/size:
+  /quota/users/{username}/size:
     get:
       summary: Get the quota size for a user
+      operationId: getQuotaSize
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -124,9 +130,10 @@ paths:
 
     put:
       summary: Update the quota size for a user
+      operationId: updateQuotaSize
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -149,9 +156,10 @@ paths:
 
     delete:
       summary: Delete the quota size for a user
+      operationId: deleteQuotaSize
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -164,6 +172,7 @@ paths:
   /quota/users:
     get:
       summary: Search users by quota ratio
+      operationId: searchByQuota
       parameters:
         - in: query
           name: minOccupationRatio
@@ -201,6 +210,7 @@ paths:
           description: Validation issues with parameters
     post:
       summary: Recompute current quotas for users
+      operationId: recomputeCurrentQuotas
       parameters:
         - in: query
           name: task

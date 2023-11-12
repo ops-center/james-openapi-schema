@@ -6,6 +6,7 @@ paths:
   /quota:
     get:
       summary: Get the global quota
+      operationId: getGlobalQuota
       responses:
         '200':
           description: Success. The global quota details are returned
@@ -24,6 +25,7 @@ paths:
 
     put:
       summary: Update the global quota
+      operationId: updateGlobalQuota
       requestBody:
         description: The new global quota
         required: true
@@ -48,6 +50,7 @@ paths:
   /quota/count:
     get:
       summary: Get the global quota count
+      operationId: getGlobalQuotaCount
       responses:
         '200':
           description: Success. The global quota count is returned
@@ -61,6 +64,7 @@ paths:
 
     put:
       summary: Update the global quota count
+      operationId: updateGlobalQuotaCount
       requestBody:
         description: The new global quota count
         required: true
@@ -78,6 +82,7 @@ paths:
 
     delete:
       summary: Delete the global quota count
+      operationId: deleteGlobalQuotaCount
       responses:
         '204':
           description: The global quota count has been updated to an unlimited value
@@ -85,6 +90,7 @@ paths:
   /quota/size:
     get:
       summary: Get the global quota size
+      operationId: getGlobalQuotaSize
       responses:
         '200':
           description: Success. The global quota size is returned
@@ -98,6 +104,7 @@ paths:
 
     put:
       summary: Update the global quota size
+      operationId: updateGlobalQuotaSize
       requestBody:
         description: The new global quota size
         required: true
@@ -115,6 +122,7 @@ paths:
 
     delete:
       summary: Delete the global quota size
+      operationId: deleteGlobalQuotaSize
       responses:
         '204':
           description: The global quota size has been updated to an unlimited value

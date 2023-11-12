@@ -6,6 +6,7 @@ paths:
   /deletedMessages/users/{user}/actions/restore:
     post:
       summary: Restore deleted messages for a specific user
+      operationId: restoreDeletedMessages
       parameters:
         - in: path
           name: user
@@ -38,6 +39,7 @@ paths:
   /deletedMessages/users/{user}/actions/export:
     post:
       summary: Export deleted messages for a specific user
+      operationId: exportDeletedMessages
       parameters:
         - in: path
           name: user
@@ -76,6 +78,7 @@ paths:
   /deletedMessages:
     delete:
       summary: Purge all expired deleted messages
+      operationId: purgeMessages
       parameters:
         - in: query
           name: scope
@@ -95,6 +98,7 @@ paths:
   /deletedMessages/users/{user}/messages/{messageId}:
     delete:
       summary: Permanently remove a deleted message
+      operationId: purgeMessage
       parameters:
         - in: path
           name: user

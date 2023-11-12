@@ -6,6 +6,7 @@ paths:
   /mailRepositories/{encodedPathOfTheRepository}:
     put:
       summary: Create a mail repository
+      operationId: createMailRepository
       parameters:
         - name: encodedPathOfTheRepository
           in: path
@@ -26,6 +27,7 @@ paths:
           description: The repository is created
     get:
       summary: Getting additional information for a mail repository
+      operationId: getMailRepository
       parameters:
         - name: encodedPathOfTheRepository
           in: path
@@ -53,6 +55,7 @@ paths:
   /mailRepositories:
     get:
       summary: Listing mail repositories
+      operationId: listMailRepositories
       responses:
         '200':
           description: The list of mail repositories
@@ -79,6 +82,7 @@ paths:
   /mailRepositories/{encodedPathOfTheRepository}/mails:
     get:
       summary: Listing mails contained in a mail repository
+      operationId: listMailsInMailRepository
       parameters:
         - name: encodedPathOfTheRepository
           in: path

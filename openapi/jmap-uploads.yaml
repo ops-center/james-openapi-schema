@@ -6,6 +6,7 @@ paths:
   /jmap/uploads:
     delete:
       summary: Clean upload repository
+      operationId: cleanUploadRepository
       parameters:
         - in: query
           name: scope

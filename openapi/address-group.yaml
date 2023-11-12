@@ -6,6 +6,7 @@ paths:
   /address/groups:
     get:
       summary: List address groups
+      operationId: listGroups
       responses:
         '200':
           description: Success
@@ -22,6 +23,7 @@ paths:
   /address/groups/{groupAddress}:
     get:
       summary: List members of a group
+      operationId: listMembers
       parameters:
         - name: groupAddress
           in: path
@@ -50,6 +52,7 @@ paths:
           description: The group does not exist
     put:
       summary: Add a group member
+      operationId: addMember
       parameters:
         - name: groupAddress
           in: path
@@ -76,6 +79,7 @@ paths:
           description: Requested group address is already used for another purpose or would cause a loop
     delete:
       summary: Remove a group member
+      operationId: removeMember
       parameters:
         - name: groupAddress
           in: path

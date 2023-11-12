@@ -6,6 +6,7 @@ paths:
   /blobs:
     delete:
       summary: Run blob garbage collection
+      operationId: runBlobGarbageCollector
       parameters:
         - in: query
           name: scope

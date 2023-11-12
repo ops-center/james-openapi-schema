@@ -6,6 +6,7 @@ paths:
   /tasks/{taskId}:
     get:
       summary: Get a task's details
+      operationId: getTask
       parameters:
         - in: path
           name: taskId
@@ -27,6 +28,7 @@ paths:
 
     delete:
       summary: Cancel a task
+      operationId: cancelTask
       parameters:
         - in: path
           name: taskId
@@ -43,6 +45,7 @@ paths:
   /tasks/{taskId}/await:
     get:
       summary: Await the completion of a task
+      operationId: awaitTaskCompletion
       parameters:
         - in: path
           name: taskId
@@ -72,6 +75,7 @@ paths:
   /tasks:
     get:
       summary: List tasks
+      operationId: listTasks
       parameters:
         - in: query
           name: status

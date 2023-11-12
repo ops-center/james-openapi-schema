@@ -6,6 +6,7 @@ paths:
   /events/deadLetter/groups:
     get:
       summary: List Mailbox Listener Groups
+      operationId: listMailboxListenerGroups
       responses:
         '200':
           description: Success. A list of group names is returned.
@@ -20,6 +21,7 @@ paths:
                 - "org.apache.james.mailbox.events.GenericGroup-abc"
     post:
       summary: Redeliver all events
+      operationId: redeliverAllEvents
       responses:
         '201':
           description: Task created successfully. The taskId of the created task is returned.
@@ -28,6 +30,7 @@ paths:
   /events/deadLetter/groups/{groupName}:
     get:
       summary: List failed events for a given group
+      operationId: listFailedEvents
       parameters:
         - in: path
           name: groupName
@@ -48,6 +51,7 @@ paths:
           description: Invalid group name
     delete:
       summary: Delete all events of a group
+      operationId: deleteAllEvents
       parameters:
         - in: path
           name: groupName
@@ -63,6 +67,7 @@ paths:
   /events/deadLetter/groups/{groupName}/{insertionId}:
     get:
       summary: Get event details
+      operationId: getEvent
       parameters:
         - in: path
           name: groupName
@@ -85,6 +90,7 @@ paths:
           description: No event with this insertionId
     delete:
       summary: Delete an event
+      operationId: deleteEvent
       parameters:
         - in: path
           name: groupName
@@ -106,6 +112,7 @@ paths:
   /events/deadLetter/groups/{groupName}/reDeliver:
     post:
       summary: Redeliver group events
+      operationId: redeliverGroupEvents
       parameters:
         - in: path
           name: groupName
@@ -121,6 +128,7 @@ paths:
   /events/deadLetter/groups/{groupName}/{insertionId}/reDeliver:
     post:
       summary: Redeliver a single event
+      operationId: redeliverEvent
       parameters:
         - in: path
           name: groupName

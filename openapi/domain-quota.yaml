@@ -6,6 +6,7 @@ paths:
   /quota/domains/{domainToBeUsed}:
     get:
       summary: Get the quota for a domain
+      operationId: getDomainQuota
       parameters:
         - in: path
           name: domainToBeUsed
@@ -22,6 +23,7 @@ paths:
 
     put:
       summary: Update the quota for a domain
+      operationId: updateDomainQuota
       parameters:
         - in: path
           name: domainToBeUsed
@@ -56,6 +58,7 @@ paths:
   /quota/domains/{domainToBeUsed}/count:
     get:
       summary: Get the quota count for a domain
+      operationId: getDomainQuotaCount
       parameters:
         - in: path
           name: domainToBeUsed
@@ -74,6 +77,7 @@ paths:
 
     put:
       summary: Update the quota count for a domain
+      operationId: updateDomainQuotaCount
       parameters:
         - in: path
           name: domainToBeUsed
@@ -101,6 +105,7 @@ paths:
 
     delete:
       summary: Delete the quota count for a domain
+      operationId: deleteDomainQuotaCount
       parameters:
         - in: path
           name: domainToBeUsed
@@ -118,6 +123,7 @@ paths:
   /quota/domains/{domainToBeUsed}/size:
     get:
       summary: Get the quota size for a domain
+      operationId: getDomainQuotaSize
       parameters:
         - in: path
           name: domainToBeUsed
@@ -136,6 +142,7 @@ paths:
 
     put:
       summary: Update the quota size for a domain
+      operationId: updateDomainQuotaSize
       parameters:
         - in: path
           name: domainToBeUsed
@@ -163,6 +170,7 @@ paths:
 
     delete:
       summary: Delete the quota size for a domain
+      operationId: deleteDomainQuotaSize
       parameters:
         - in: path
           name: domainToBeUsed

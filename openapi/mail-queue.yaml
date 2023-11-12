@@ -6,6 +6,7 @@ paths:
   /mailQueues:
     get:
       summary: List mail queues
+      operationId: listMailQueues
       responses:
         '200':
           description: List of mail queues
@@ -14,6 +15,7 @@ paths:
               example: '["outgoing","spool"]'
     post:
       summary: RabbitMQ republishing a mail queue from Cassandra
+      operationId: republishMailQueue
       parameters:
         - in: query
           name: action
@@ -38,6 +40,7 @@ paths:
   /mailQueues/{mailQueueName}:
     get:
       summary: Get mail queue details
+      operationId: getMailQueue
       parameters:
         - in: path
           name: mailQueueName
@@ -64,6 +67,7 @@ paths:
           description: Mail queue does not exist
     delete:
       summary: Clear a mail queue
+      operationId: clearMailQueue
       parameters:
         - in: path
           name: mailQueueName
@@ -84,6 +88,7 @@ paths:
   /mailQueues/{mailQueueName}/mails:
     get:
       summary: List mails of a mail queue
+      operationId: listMailsOfMailQueue
       parameters:
         - in: path
           name: mailQueueName
@@ -125,6 +130,7 @@ paths:
           description: Mail queue does not exist
     delete:
       summary: Delete mails from a mail queue
+      operationId: deleteMailsOfMailQueue
       parameters:
         - in: path
           name: mailQueueName
@@ -160,6 +166,7 @@ paths:
   /mailQueues/{mailQueueName}:
     patch:
       summary: Flush mails from a mail queue
+      operationId: flushMailsOfMailQueue
       parameters:
         - in: path
           name: mailQueueName

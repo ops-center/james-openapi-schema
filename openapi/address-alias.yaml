@@ -6,6 +6,7 @@ paths:
   /address/aliases:
     get:
       summary: List users with aliases
+      operationId: listAliases
       responses:
         '200':
           description: Success
@@ -22,6 +23,7 @@ paths:
   /address/aliases/{userAddress}:
     get:
       summary: List alias sources of a user
+      operationId: getAlias
       parameters:
         - name: userAddress
           in: path
@@ -50,6 +52,7 @@ paths:
           description: Alias structure is not valid
     put:
       summary: Add a new alias to a user
+      operationId: createAlias
       parameters:
         - name: userAddress
           in: path
@@ -81,6 +84,7 @@ paths:
             The creation of the alias would lead to a loop and cannot be performed
     delete:
       summary: Remove an alias from a user
+      operationId: deleteAlias
       parameters:
         - name: userAddress
           in: path

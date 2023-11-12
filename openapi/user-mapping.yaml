@@ -6,6 +6,7 @@ paths:
   /mappings/user/{userAddress}:
     get:
       summary: Listing User Mappings
+      operationId: listUserMappings
       parameters:
         - name: userAddress
           in: path

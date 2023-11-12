@@ -6,6 +6,7 @@ paths:
   /users/{username}:
     put:
       summary: Create or Update User
+      operationId: upsertUser
       parameters:
         - name: username
           in: path
@@ -40,6 +41,7 @@ paths:
 
     head:
       summary: Test user existence
+      operationId: existsUser
       parameters:
         - in: path
           name: username
@@ -57,6 +59,7 @@ paths:
 
     delete:
       summary: Delete a user
+      operationId: deleteUser
       parameters:
         - in: path
           name: username
@@ -71,6 +74,7 @@ paths:
   /users:
     get:
       summary: Retrieve the user list
+      operationId: listUsers
       responses:
         '200':
           description: The user name list was successfully retrieved
@@ -86,6 +90,7 @@ paths:
   /users/{givenUser}/allowedFromHeaders:
     get:
       summary: Retrieve the list of allowed From headers for a given user
+      operationId: listAllowedFromHeaders
       parameters:
         - name: givenUser
           in: path
@@ -104,6 +109,7 @@ paths:
   /users/{baseUser}/authorizedUsers/delegatedUser:
     put:
       summary: Add a delegated user to a base user
+      operationId: addDelegatedUser
       parameters:
         - name: baseUser
           in: path
@@ -124,6 +130,7 @@ paths:
           description: The delegated user does not exist
     delete:
       summary: Remove a delegated user from a base user
+      operationId: removeDelegatedUser
       parameters:
         - name: baseUser
           in: path
@@ -145,6 +152,7 @@ paths:
   /users/{baseUser}/authorizedUsers:
     get:
       summary: Retrieve the list of delegated users of a base user
+      operationId: listDelegatedUsers
       parameters:
         - name: baseUser
           in: path
@@ -162,6 +170,7 @@ paths:
                   type: string
     delete:
       summary: Remove all delegated users of a base user
+      operationId: removeAllDelegatedUsers
       parameters:
         - name: baseUser
           in: path
@@ -176,6 +185,7 @@ paths:
   /users/{oldUser}/rename/{newUser}:
     post:
       summary: Change a username
+      operationId: changeUsername
       parameters:
         - name: oldUser
           in: path
@@ -202,6 +212,7 @@ paths:
   /users/{username}/identities:
     get:
       summary: Retrieve the user identities
+      operationId: listUserIdentities
       parameters:
         - name: username
           in: path
@@ -256,6 +267,7 @@ paths:
                             type: string
     post:
       summary: Create a JMAP user identity
+      operationId: createUserIdentity
       parameters:
         - name: username
           in: path
@@ -309,6 +321,7 @@ paths:
   /users/{username}/identities/{identityId}:
     put:
       summary: Update a JMAP user identity
+      operationId: updateUserIdentity
       parameters:
         - name: username
           in: path

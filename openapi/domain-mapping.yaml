@@ -6,6 +6,7 @@ paths:
   /domainMappings:
     get:
       summary: List all domain mappings
+      operationId: listDomainMappings
       responses:
         '200':
           description: OK
@@ -23,6 +24,7 @@ paths:
                       - "secondDestination.net"
     put:
       summary: Add a domain mapping
+      operationId: addDomainMapping
       requestBody:
         required: true
         content:
@@ -40,6 +42,7 @@ paths:
             The destination domain specified in the body is invalid
     delete:
       summary: Remove a domain mapping
+      operationId: removeDomainMapping
       requestBody:
         required: true
         content:
@@ -58,6 +61,7 @@ paths:
   /domainMappings/{fromDomain}:
     get:
       summary: List all destination domains for a source domain
+      operationId: listDestinationDomains
       parameters:
         - name: fromDomain
           in: path

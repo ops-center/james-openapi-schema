@@ -6,6 +6,7 @@ paths:
   /messages/{messageId}:
     post:
       summary: Reindex a single mail by messageId
+      operationId: reindexEmail
       parameters:
         - name: messageId
           in: path
@@ -41,6 +42,7 @@ paths:
   /messages:
     post:
       summary: Schedule a task for fixing message inconsistencies
+      operationId: scheduleTask
       parameters:
         - name: task
           in: query

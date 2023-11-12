@@ -36,7 +36,7 @@ paths:
   /domains/{domainName}:
     get:
       summary: Test if a domain exists
-      operationId: testDomainExists
+      operationId: existsDomain
       parameters:
         - name: domainName
           in: path
@@ -52,7 +52,7 @@ paths:
   /domains:
     get:
       summary: Get the list of domains
-      operationId: getDomainList
+      operationId: listDomains
       responses:
         '200':
           description: The domain list was successfully retrieved
@@ -65,7 +65,7 @@ paths:
   /domains/{domainName}/aliases:
     get:
       summary: Get the list of aliases for a domain
-      operationId: getDomainAliases
+      operationId: listDomainAliases
       parameters:
         - name: domainName
           in: path

@@ -6,6 +6,7 @@ paths:
   /mailboxes:
     post:
       summary: Perform actions on mailboxes
+      operationId: performActionsOnMailboxes
       parameters:
         - name: action
           in: query
@@ -32,6 +33,7 @@ paths:
   /mailboxes/{mailboxId}:
     post:
       summary: Reindex a mailbox
+      operationId: reindexMailbox
       parameters:
         - name: mailboxId
           in: path

@@ -6,6 +6,7 @@ paths:
   /mappings:
     get:
       summary: List all address mappings
+      operationId: listAddressMappings
       responses:
         '200':
           description: OK
@@ -38,6 +39,7 @@ paths:
                       mapping: user@domain.tld
     post:
       summary: Add an address mapping
+      operationId: addAddressMapping
       parameters:
         - name: mappingSource
           in: path
@@ -63,6 +65,7 @@ paths:
   /mappings/address/{mappingSource}/targets/{destinationAddress}:
     delete:
       summary: Remove an address mapping
+      operationId: removeAddressMapping
       parameters:
         - name: mappingSource
           in: path

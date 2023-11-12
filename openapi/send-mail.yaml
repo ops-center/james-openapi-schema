@@ -6,6 +6,7 @@ paths:
   /mail-transfer-service:
     post:
       summary: Send email
+      operationId: sendEmail
       requestBody:
         required: true
         content:

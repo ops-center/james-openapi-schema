@@ -39,7 +39,7 @@ paths:
   /healthcheck/checks/{componentName}:
     get:
       summary: Check single component
-      operationId: checkSingleComponent
+      operationId: checkComponent
       parameters:
         - name: componentName
           in: path

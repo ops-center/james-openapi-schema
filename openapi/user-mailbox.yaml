@@ -3,12 +3,13 @@ info:
   title: Mailbox Management API
   version: 1.0.0
 paths:
-  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeCreated}:
+  /users/{username}/mailboxes/{mailboxNameToBeCreated}:
     put:
       summary: Create a mailbox
+      operationId: createMailbox
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -25,12 +26,13 @@ paths:
         '404':
           description: The user name does not exist
 
-  /users/{usernameToBeUsed}/mailboxes/INBOX.work:
+  /users/{username}/mailboxes/INBOX.work:
     delete:
       summary: Delete a mailbox and its children
+      operationId: deleteMailbox
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -47,12 +49,13 @@ paths:
         '404':
           description: The user name does not exist
 
-  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeTested}:
+  /users/{username}/mailboxes/{mailboxNameToBeTested}:
     get:
       summary: Test existence of a mailbox
+      operationId: existsMailbox
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -69,12 +72,13 @@ paths:
         '404':
           description: The user name does not exist, or the mailbox does not exist
 
-  /users/{usernameToBeUsed}/mailboxes:
+  /users/{username}/mailboxes:
     get:
       summary: List user mailboxes
+      operationId: listMailboxes
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -95,9 +99,10 @@ paths:
 
     delete:
       summary: Delete user mailboxes
+      operationId: deleteMailboxes
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -107,12 +112,13 @@ paths:
         '404':
           description: The user name does not exist
 
-  /users/{usernameToBeUsed}/mailboxes?action=export:
+  /users/{username}/mailboxes?action=export:
     post:
       summary: Export user mailboxes
+      operationId: exportMailboxes
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -122,12 +128,13 @@ paths:
         '404':
           description: The user name does not exist
 
-  /users/{usernameToBeUsed}/mailboxes?task=reIndex:
+  /users/{username}/mailboxes?task=reIndex:
     post:
       summary: Reindex a user's mails
+      operationId: reindexEmails
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -151,12 +158,13 @@ paths:
         '404':
           description: User not found
 
-  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messageCount:
+  /users/{username}/mailboxes/{mailboxName}/messageCount:
     get:
       summary: Count emails in a mailbox
+      operationId: countEmails
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -171,14 +179,15 @@ paths:
         '400':
           description: Invalid mailbox name
         '404':
-          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName does not exist
+          description: Invalid get on user mailboxes. The username or mailboxName does not exist
 
-  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/unseenMessageCount:
+  /users/{username}/mailboxes/{mailboxName}/unseenMessageCount:
     get:
       summary: Count unseen emails in a mailbox
+      operationId: countUnseenEmails
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -193,14 +202,15 @@ paths:
         '400':
           description: Invalid mailbox name
         '404':
-          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName does not exist
+          description: Invalid get on user mailboxes. The username or mailboxName does not exist
 
-  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messages:
+  /users/{username}/mailboxes/{mailboxName}/messages:
     delete:
       summary: Clear mailbox content
+      operationId: clearMailbox
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -217,12 +227,13 @@ paths:
         '404':
           description: Invalid get on user mailboxes. The username or mailboxName does not exist
 
-  /users/{usernameToBeUsed}/mailboxes?task=subscribeAll:
+  /users/{username}/mailboxes?task=subscribeAll:
     post:
       summary: Subscribe a user to all of their mailboxes
+      operationId: subscribeAllMailboxes
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -232,12 +243,13 @@ paths:
         '404':
           description: No such user
 
-  /users/{usernameToBeUsed}/mailboxes?task=recomputeFastViewProjectionItems:
+  /users/{username}/mailboxes?task=recomputeFastViewProjectionItems:
     post:
       summary: Recompute User JMAP fast message view projection
+      operationId: recomputeMessageViewProjection
       parameters:
         - in: path
-          name: usernameToBeUsed
+          name: username
           required: true
           schema:
             type: string
@@ -258,6 +270,7 @@ paths:
   /mailboxes?task=populateFilteringProjection:
     post:
       summary: Recompute Cassandra filtering projection
+      operationId: recomputeCassandraFilteringProjection
       responses:
         '201':
           description: Success. Corresponding task ID is returned

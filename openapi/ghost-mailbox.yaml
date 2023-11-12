@@ -6,6 +6,7 @@ paths:
   /cassandra/mailbox/merging:
     post:
       summary: Correct ghost mailbox by merging
+      operationId: correctGhostMailbox
       requestBody:
         description: Parameters for merging mailboxes
         required: true

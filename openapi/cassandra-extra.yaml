@@ -6,6 +6,7 @@ paths:
   /cassandra/mappings:
     post:
       summary: Perform an action on mappings_sources table
+      operationId: performActionOnCassandraMappings
       parameters:
         - in: query
           name: action

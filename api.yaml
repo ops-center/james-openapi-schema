@@ -165,6 +165,7 @@ openapi: 3.0.1
 paths:
   /address/aliases:
     get:
+      operationId: listAliases
       responses:
         "200":
           content:
@@ -183,6 +184,7 @@ paths:
       - address-alias
   /address/aliases/{userAddress}:
     delete:
+      operationId: deleteAlias
       parameters:
       - description: User mail address
         example: user@domain.com
@@ -209,6 +211,7 @@ paths:
       tags:
       - address-alias
     get:
+      operationId: getAlias
       parameters:
       - description: User mail address
         example: user@domain.com
@@ -238,6 +241,7 @@ paths:
       tags:
       - address-alias
     put:
+      operationId: createAlias
       parameters:
       - description: User mail address
         example: user@domain.com
@@ -272,6 +276,7 @@ paths:
       - address-alias
   /address/forwards:
     get:
+      operationId: listForwards
       responses:
         "200":
           content:
@@ -290,6 +295,7 @@ paths:
       - address-forward
   /address/forwards/{userAddress}:
     delete:
+      operationId: deleteDestination
       parameters:
       - description: User mail address
         example: user@domain.com
@@ -316,6 +322,7 @@ paths:
       tags:
       - address-forward
     get:
+      operationId: listDestinations
       parameters:
       - description: User mail address
         example: user@domain.com
@@ -347,6 +354,7 @@ paths:
       tags:
       - address-forward
     put:
+      operationId: addDestination
       parameters:
       - description: User mail address
         example: user@domain.com
@@ -381,6 +389,7 @@ paths:
       - address-forward
   /address/groups:
     get:
+      operationId: listGroups
       responses:
         "200":
           content:
@@ -399,6 +408,7 @@ paths:
       - address-group
   /address/groups/{groupAddress}:
     delete:
+      operationId: removeMember
       parameters:
       - description: Group mail address
         example: group@domain.com
@@ -425,6 +435,7 @@ paths:
       tags:
       - address-group
     get:
+      operationId: listMembers
       parameters:
       - description: Group mail address
         example: group@domain.com
@@ -455,6 +466,7 @@ paths:
       tags:
       - address-group
     put:
+      operationId: addMember
       parameters:
       - description: Group mail address
         example: group@domain.com
@@ -485,6 +497,7 @@ paths:
       - address-group
   /blobs:
     delete:
+      operationId: runBlobGarbageCollector
       parameters:
       - description: Specifies the scope of garbage collection (e.g., "unreferenced"
           blobs)
@@ -541,6 +554,7 @@ paths:
       - garbage-collection
   /cassandra/mailbox/merging:
     post:
+      operationId: correctGhostMailbox
       requestBody:
         content:
           application/json:
@@ -596,6 +610,7 @@ paths:
       - ghost-mailbox
   /cassandra/mappings:
     post:
+      operationId: performActionOnCassandraMappings
       parameters:
       - description: The action to perform on mappings_sources table
         in: query
@@ -622,6 +637,7 @@ paths:
       - cassandra-extra
   /cassandra/version:
     get:
+      operationId: getSchemaVersion
       responses:
         "200":
           content:
@@ -639,6 +655,7 @@ paths:
       - cassandra-schema-upgrade
   /cassandra/version/latest:
     get:
+      operationId: getLatestAvailableSchemaVersion
       responses:
         "200":
           content:
@@ -656,6 +673,7 @@ paths:
       - cassandra-schema-upgrade
   /cassandra/version/upgrade:
     post:
+      operationId: upgradeSchemaVersion
       requestBody:
         content:
           application/json:
@@ -698,6 +716,7 @@ paths:
       - cassandra-schema-upgrade
   /cassandra/version/upgrade/latest:
     post:
+      operationId: upgradeToLatestSchemaVersion
       responses:
         "200":
           content:
@@ -725,6 +744,7 @@ paths:
       - cassandra-schema-upgrade
   /deletedMessages:
     delete:
+      operationId: purgeMessages
       parameters:
       - description: The scope of messages to purge
         in: query
@@ -746,6 +766,7 @@ paths:
       - deleted-message-vault
   /deletedMessages/users/{user}/actions/export:
     post:
+      operationId: exportDeletedMessages
       parameters:
       - description: The user to export deleted messages from
         in: path
@@ -787,6 +808,7 @@ paths:
       - deleted-message-vault
   /deletedMessages/users/{user}/actions/restore:
     post:
+      operationId: restoreDeletedMessages
       parameters:
       - description: The user to restore deleted messages for
         in: path
@@ -822,6 +844,7 @@ paths:
       - deleted-message-vault
   /deletedMessages/users/{user}/messages/{messageId}:
     delete:
+      operationId: purgeMessage
       parameters:
       - description: The user of the deleted message
         in: path
@@ -847,6 +870,7 @@ paths:
       - deleted-message-vault
   /dlp/rules/{senderDomain}:
     delete:
+      operationId: removeDLPConfiguration
       parameters:
       - in: path
         name: senderDomain
@@ -864,6 +888,7 @@ paths:
       tags:
       - dlp
     get:
+      operationId: listDLPConfiguration
       parameters:
       - in: path
         name: senderDomain
@@ -881,6 +906,7 @@ paths:
       tags:
       - dlp
     put:
+      operationId: storeDLPConfiguration
       parameters:
       - in: path
         name: senderDomain
@@ -932,6 +958,7 @@ paths:
       - dlp
   /dlp/rules/{senderDomain}/rules/{ruleId}:
     get:
+      operationId: fetchDLPConfiguration
       parameters:
       - in: path
         name: senderDomain
@@ -955,6 +982,7 @@ paths:
       - dlp
   /domainMappings:
     delete:
+      operationId: removeDomainMapping
       requestBody:
         content:
           text/plain:
@@ -974,6 +1002,7 @@ paths:
       tags:
       - domain-mapping
     get:
+      operationId: listDomainMappings
       responses:
         "200":
           content:
@@ -993,6 +1022,7 @@ paths:
       tags:
       - domain-mapping
     put:
+      operationId: addDomainMapping
       requestBody:
         content:
           text/plain:
@@ -1013,6 +1043,7 @@ paths:
       - domain-mapping
   /domainMappings/{fromDomain}:
     get:
+      operationId: listDestinationDomains
       parameters:
       - description: Source domain name
         example: sourceDomain.tld
@@ -1044,7 +1075,7 @@ paths:
       - domain-mapping
   /domains:
     get:
-      operationId: getDomainList
+      operationId: listDomains
       responses:
         "200":
           content:
@@ -1059,7 +1090,7 @@ paths:
       - domains
   /domains/{domainName}:
     get:
-      operationId: testDomainExists
+      operationId: existsDomain
       parameters:
       - description: Name of the domain to be tested
         in: path
@@ -1103,7 +1134,7 @@ paths:
       tags:
       - domains
     get:
-      operationId: getDomainAliases
+      operationId: listDomainAliases
       parameters:
       - description: Name of the domain to retrieve aliases for
         in: path
@@ -1221,6 +1252,7 @@ paths:
       - domains
   /events/deadLetter/groups:
     get:
+      operationId: listMailboxListenerGroups
       responses:
         "200":
           content:
@@ -1237,6 +1269,7 @@ paths:
       tags:
       - event-dead-letter
     post:
+      operationId: redeliverAllEvents
       responses:
         "201":
           description: Task created successfully. The taskId of the created task is
@@ -1248,6 +1281,7 @@ paths:
       - event-dead-letter
   /events/deadLetter/groups/{groupName}:
     delete:
+      operationId: deleteAllEvents
       parameters:
       - description: The name of the mailbox listener group
         in: path
@@ -1264,6 +1298,7 @@ paths:
       tags:
       - event-dead-letter
     get:
+      operationId: listFailedEvents
       parameters:
       - description: The name of the mailbox listener group
         in: path
@@ -1287,6 +1322,7 @@ paths:
       - event-dead-letter
   /events/deadLetter/groups/{groupName}/{insertionId}:
     delete:
+      operationId: deleteEvent
       parameters:
       - description: The name of the mailbox listener group
         in: path
@@ -1309,6 +1345,7 @@ paths:
       tags:
       - event-dead-letter
     get:
+      operationId: getEvent
       parameters:
       - description: The name of the mailbox listener group
         in: path
@@ -1334,6 +1371,7 @@ paths:
       - event-dead-letter
   /events/deadLetter/groups/{groupName}/{insertionId}/reDeliver:
     post:
+      operationId: redeliverEvent
       parameters:
       - description: The name of the mailbox listener group
         in: path
@@ -1360,6 +1398,7 @@ paths:
       - event-dead-letter
   /events/deadLetter/groups/{groupName}/reDeliver:
     post:
+      operationId: redeliverGroupEvents
       parameters:
       - description: The name of the mailbox listener group
         in: path
@@ -1418,7 +1457,7 @@ paths:
       - healthcheck
   /healthcheck/checks/{componentName}:
     get:
-      operationId: checkSingleComponent
+      operationId: checkComponent
       parameters:
       - description: URL encoded name of the component
         in: path
@@ -1442,6 +1481,7 @@ paths:
       - healthcheck
   /jmap/uploads:
     delete:
+      operationId: cleanUploadRepository
       parameters:
       - description: Specifies the scope of cleanup (e.g., "expired" uploads)
         in: query
@@ -1490,6 +1530,7 @@ paths:
       - jmap-uploads
   /mail-transfer-service:
     post:
+      operationId: sendEmail
       requestBody:
         content:
           message/rfc822:
@@ -1507,6 +1548,7 @@ paths:
       - send-mail
   /mailQueues:
     get:
+      operationId: listMailQueues
       responses:
         "200":
           content:
@@ -1517,6 +1559,7 @@ paths:
       tags:
       - mail-queue
     post:
+      operationId: republishMailQueue
       parameters:
       - description: Republish action (RepublishNotProcessedMails)
         in: query
@@ -1544,6 +1587,7 @@ paths:
       - mail-queue
   /mailQueues/{mailQueueName}:
     patch:
+      operationId: flushMailsOfMailQueue
       parameters:
       - description: Name of the mail queue
         in: path
@@ -1572,6 +1616,7 @@ paths:
       - mail-queue
   /mailQueues/{mailQueueName}/mails:
     delete:
+      operationId: deleteMailsOfMailQueue
       parameters:
       - description: Name of the mail queue
         in: path
@@ -1609,6 +1654,7 @@ paths:
       tags:
       - mail-queue
     get:
+      operationId: listMailsOfMailQueue
       parameters:
       - description: Name of the mail queue
         in: path
@@ -1653,6 +1699,7 @@ paths:
       - mail-queue
   /mailRepositories:
     get:
+      operationId: listMailRepositories
       responses:
         "200":
           content:
@@ -1681,6 +1728,7 @@ paths:
       - mail-repository
   /mailRepositories/{encodedPathOfTheRepository}:
     get:
+      operationId: getMailRepository
       parameters:
       - description: Encoded resource path of an existing mail repository
         in: path
@@ -1709,6 +1757,7 @@ paths:
       tags:
       - mail-repository
     put:
+      operationId: createMailRepository
       parameters:
       - description: Encoded resource path of the created mail repository
         in: path
@@ -1732,6 +1781,7 @@ paths:
       - mail-repository
   /mailRepositories/{encodedPathOfTheRepository}/mails:
     get:
+      operationId: listMailsInMailRepository
       parameters:
       - description: Encoded resource path of an existing mail repository
         in: path
@@ -1776,6 +1826,7 @@ paths:
       - mail-repository
   /mailboxes:
     post:
+      operationId: performActionsOnMailboxes
       parameters:
       - description: Comma-separated list of actions to perform on mailboxes
         in: query
@@ -1805,6 +1856,7 @@ paths:
       - mailbox
   /mailboxes/{mailboxId}:
     post:
+      operationId: reindexMailbox
       parameters:
       - description: ID of the mailbox to reindex
         in: path
@@ -1855,6 +1907,7 @@ paths:
       - mailbox
   /mailboxes?task=populateFilteringProjection:
     post:
+      operationId: recomputeCassandraFilteringProjection
       responses:
         "201":
           description: Success. Corresponding task ID is returned
@@ -1866,6 +1919,7 @@ paths:
       - user-mailbox
   /mappings:
     get:
+      operationId: listAddressMappings
       responses:
         "200":
           content:
@@ -1907,6 +1961,7 @@ paths:
       tags:
       - address-mapping
     post:
+      operationId: addAddressMapping
       parameters:
       - description: Mapping source (recipient address)
         in: path
@@ -1935,6 +1990,7 @@ paths:
       - address-mapping
   /mappings/address/{mappingSource}/targets/{destinationAddress}:
     delete:
+      operationId: removeAddressMapping
       parameters:
       - description: Mapping source (recipient address)
         in: path
@@ -1960,6 +2016,7 @@ paths:
       - address-mapping
   /mappings/regex/{mappingSource}/targets/{regex}:
     delete:
+      operationId: removeRegexMapping
       parameters:
       - description: Mapping source (recipient address)
         in: path
@@ -1986,6 +2043,7 @@ paths:
       tags:
       - regex-mapping
     post:
+      operationId: addRegexMapping
       parameters:
       - description: Mapping source (recipient address)
         in: path
@@ -2013,6 +2071,7 @@ paths:
       - regex-mapping
   /mappings/user/{userAddress}:
     get:
+      operationId: listUserMappings
       parameters:
       - description: User address
         in: path
@@ -2053,6 +2112,7 @@ paths:
       - user-mapping
   /messages:
     post:
+      operationId: scheduleTask
       parameters:
       - description: Task type for fixing message inconsistencies
         in: query
@@ -2100,6 +2160,7 @@ paths:
       - messages
   /messages/{messageId}:
     post:
+      operationId: reindexEmail
       parameters:
       - description: Implementation-dependent valid messageId
         in: path
@@ -2138,6 +2199,7 @@ paths:
       - messages
   /quota:
     get:
+      operationId: getGlobalQuota
       responses:
         "200":
           content:
@@ -2157,6 +2219,7 @@ paths:
       tags:
       - global-quota
     put:
+      operationId: updateGlobalQuota
       requestBody:
         content:
           application/json:
@@ -2182,6 +2245,7 @@ paths:
       - global-quota
   /quota/count:
     delete:
+      operationId: deleteGlobalQuotaCount
       responses:
         "204":
           description: The global quota count has been updated to an unlimited value
@@ -2189,6 +2253,7 @@ paths:
       tags:
       - global-quota
     get:
+      operationId: getGlobalQuotaCount
       responses:
         "200":
           content:
@@ -2203,6 +2268,7 @@ paths:
       tags:
       - global-quota
     put:
+      operationId: updateGlobalQuotaCount
       requestBody:
         content:
           application/json:
@@ -2222,6 +2288,7 @@ paths:
       - global-quota
   /quota/domains/{domainToBeUsed}:
     get:
+      operationId: getDomainQuota
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2240,6 +2307,7 @@ paths:
       tags:
       - domain-quota
     put:
+      operationId: updateDomainQuota
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2276,6 +2344,7 @@ paths:
       - domain-quota
   /quota/domains/{domainToBeUsed}/count:
     delete:
+      operationId: deleteDomainQuotaCount
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2294,6 +2363,7 @@ paths:
       tags:
       - domain-quota
     get:
+      operationId: getDomainQuotaCount
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2315,6 +2385,7 @@ paths:
       tags:
       - domain-quota
     put:
+      operationId: updateDomainQuotaCount
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2345,6 +2416,7 @@ paths:
       - domain-quota
   /quota/domains/{domainToBeUsed}/size:
     delete:
+      operationId: deleteDomainQuotaSize
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2363,6 +2435,7 @@ paths:
       tags:
       - domain-quota
     get:
+      operationId: getDomainQuotaSize
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2384,6 +2457,7 @@ paths:
       tags:
       - domain-quota
     put:
+      operationId: updateDomainQuotaSize
       parameters:
       - in: path
         name: domainToBeUsed
@@ -2414,6 +2488,7 @@ paths:
       - domain-quota
   /quota/size:
     delete:
+      operationId: deleteGlobalQuotaSize
       responses:
         "204":
           description: The global quota size has been updated to an unlimited value
@@ -2421,6 +2496,7 @@ paths:
       tags:
       - global-quota
     get:
+      operationId: getGlobalQuotaSize
       responses:
         "200":
           content:
@@ -2435,6 +2511,7 @@ paths:
       tags:
       - global-quota
     put:
+      operationId: updateGlobalQuotaSize
       requestBody:
         content:
           application/json:
@@ -2454,6 +2531,7 @@ paths:
       - global-quota
   /quota/users:
     get:
+      operationId: searchByQuota
       parameters:
       - description: The minimum occupation ratio of users to be returned
         in: query
@@ -2493,6 +2571,7 @@ paths:
       tags:
       - user-quota
     post:
+      operationId: recomputeCurrentQuotas
       parameters:
       - in: query
         name: task
@@ -2522,11 +2601,12 @@ paths:
       summary: Recompute current quotas for users
       tags:
       - user-quota
-  /quota/users/{usernameToBeUsed}:
+  /quota/users/{username}:
     get:
+      operationId: getQuota
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2539,9 +2619,10 @@ paths:
       tags:
       - user-quota
     put:
+      operationId: updateQuota
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2570,11 +2651,12 @@ paths:
       summary: Update the quota for a user
       tags:
       - user-quota
-  /quota/users/{usernameToBeUsed}/count:
+  /quota/users/{username}/count:
     delete:
+      operationId: deleteQuotaCount
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2587,9 +2669,10 @@ paths:
       tags:
       - user-quota
     get:
+      operationId: getQuotaCount
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2604,9 +2687,10 @@ paths:
       tags:
       - user-quota
     put:
+      operationId: updateQuotaCount
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2629,11 +2713,12 @@ paths:
       summary: Update the quota count for a user
       tags:
       - user-quota
-  /quota/users/{usernameToBeUsed}/size:
+  /quota/users/{username}/size:
     delete:
+      operationId: deleteQuotaSize
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2646,9 +2731,10 @@ paths:
       tags:
       - user-quota
     get:
+      operationId: getQuotaSize
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2663,9 +2749,10 @@ paths:
       tags:
       - user-quota
     put:
+      operationId: updateQuotaSize
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -2706,6 +2793,7 @@ paths:
       tags:
       - sieve-quota
     put:
+      operationId: updateGlobalSieveQuota
       requestBody:
         content:
           application/json:
@@ -2726,6 +2814,7 @@ paths:
       - sieve-quota
   /sieve/quota/users/{userEmail}:
     delete:
+      operationId: removeUserSieveQuota
       parameters:
       - in: path
         name: userEmail
@@ -2740,6 +2829,7 @@ paths:
       tags:
       - sieve-quota
     get:
+      operationId: getUserSieveQuota
       parameters:
       - in: path
         name: userEmail
@@ -2756,6 +2846,7 @@ paths:
       tags:
       - sieve-quota
     put:
+      operationId: updateUserSieveQuota
       parameters:
       - in: path
         name: userEmail
@@ -2783,6 +2874,7 @@ paths:
       - sieve-quota
   /tasks:
     get:
+      operationId: listTasks
       parameters:
       - description: The status of the tasks (waiting, inProgress, canceledRequested,
           completed, canceled, failed)
@@ -2871,6 +2963,7 @@ paths:
       - task
   /tasks/{taskId}:
     delete:
+      operationId: cancelTask
       parameters:
       - description: The ID of the task
         in: path
@@ -2887,6 +2980,7 @@ paths:
       tags:
       - task
     get:
+      operationId: getTask
       parameters:
       - description: The ID of the task
         in: path
@@ -2910,6 +3004,7 @@ paths:
       - task
   /tasks/{taskId}/await:
     get:
+      operationId: awaitTaskCompletion
       parameters:
       - description: The ID of the task
         in: path
@@ -2941,6 +3036,7 @@ paths:
       - task
   /users:
     get:
+      operationId: listUsers
       responses:
         "200":
           content:
@@ -2958,6 +3054,7 @@ paths:
       - users
   /users/{baseUser}/authorizedUsers:
     delete:
+      operationId: removeAllDelegatedUsers
       parameters:
       - in: path
         name: baseUser
@@ -2973,6 +3070,7 @@ paths:
       tags:
       - users
     get:
+      operationId: listDelegatedUsers
       parameters:
       - in: path
         name: baseUser
@@ -2993,6 +3091,7 @@ paths:
       - users
   /users/{baseUser}/authorizedUsers/delegatedUser:
     delete:
+      operationId: removeDelegatedUser
       parameters:
       - in: path
         name: baseUser
@@ -3015,6 +3114,7 @@ paths:
       tags:
       - users
     put:
+      operationId: addDelegatedUser
       parameters:
       - in: path
         name: baseUser
@@ -3038,6 +3138,7 @@ paths:
       - users
   /users/{givenUser}/allowedFromHeaders:
     get:
+      operationId: listAllowedFromHeaders
       parameters:
       - in: path
         name: givenUser
@@ -3058,6 +3159,7 @@ paths:
       - users
   /users/{oldUser}/rename/{newUser}:
     post:
+      operationId: changeUsername
       parameters:
       - in: path
         name: oldUser
@@ -3087,6 +3189,7 @@ paths:
       - users
   /users/{username}:
     delete:
+      operationId: deleteUser
       parameters:
       - description: The username to be deleted
         in: path
@@ -3101,6 +3204,7 @@ paths:
       tags:
       - users
     head:
+      operationId: existsUser
       parameters:
       - description: The username to be tested
         in: path
@@ -3119,6 +3223,7 @@ paths:
       tags:
       - users
     put:
+      operationId: upsertUser
       parameters:
       - description: The username of the user to be created or updated
         in: path
@@ -3157,6 +3262,7 @@ paths:
       - users
   /users/{username}/identities:
     get:
+      operationId: listUserIdentities
       parameters:
       - in: path
         name: username
@@ -3213,6 +3319,7 @@ paths:
       tags:
       - users
     post:
+      operationId: createUserIdentity
       parameters:
       - in: path
         name: username
@@ -3268,6 +3375,7 @@ paths:
       - users
   /users/{username}/identities/{identityId}:
     put:
+      operationId: updateUserIdentity
       parameters:
       - in: path
         name: username
@@ -3322,11 +3430,12 @@ paths:
       summary: Update a JMAP user identity
       tags:
       - users
-  /users/{usernameToBeUsed}/mailboxes:
+  /users/{username}/mailboxes:
     delete:
+      operationId: deleteMailboxes
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3339,9 +3448,10 @@ paths:
       tags:
       - user-mailbox
     get:
+      operationId: listMailboxes
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3362,11 +3472,12 @@ paths:
       summary: List user mailboxes
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messageCount:
+  /users/{username}/mailboxes/{mailboxName}/messageCount:
     get:
+      operationId: countEmails
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3381,16 +3492,17 @@ paths:
         "400":
           description: Invalid mailbox name
         "404":
-          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName
+          description: Invalid get on user mailboxes. The username or mailboxName
             does not exist
       summary: Count emails in a mailbox
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messages:
+  /users/{username}/mailboxes/{mailboxName}/messages:
     delete:
+      operationId: clearMailbox
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3410,11 +3522,12 @@ paths:
       summary: Clear mailbox content
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/unseenMessageCount:
+  /users/{username}/mailboxes/{mailboxName}/unseenMessageCount:
     get:
+      operationId: countUnseenEmails
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3429,16 +3542,17 @@ paths:
         "400":
           description: Invalid mailbox name
         "404":
-          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName
+          description: Invalid get on user mailboxes. The username or mailboxName
             does not exist
       summary: Count unseen emails in a mailbox
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeCreated}:
+  /users/{username}/mailboxes/{mailboxNameToBeCreated}:
     put:
+      operationId: createMailbox
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3457,11 +3571,12 @@ paths:
       summary: Create a mailbox
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeTested}:
+  /users/{username}/mailboxes/{mailboxNameToBeTested}:
     get:
+      operationId: existsMailbox
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3480,11 +3595,12 @@ paths:
       summary: Test existence of a mailbox
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes/INBOX.work:
+  /users/{username}/mailboxes/INBOX.work:
     delete:
+      operationId: deleteMailbox
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3503,11 +3619,12 @@ paths:
       summary: Delete a mailbox and its children
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes?action=export:
+  /users/{username}/mailboxes?action=export:
     post:
+      operationId: exportMailboxes
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3519,11 +3636,12 @@ paths:
       summary: Export user mailboxes
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes?task=reIndex:
+  /users/{username}/mailboxes?task=reIndex:
     post:
+      operationId: reindexEmails
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3553,11 +3671,12 @@ paths:
       summary: Reindex a user's mails
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes?task=recomputeFastViewProjectionItems:
+  /users/{username}/mailboxes?task=recomputeFastViewProjectionItems:
     post:
+      operationId: recomputeMessageViewProjection
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string
@@ -3578,11 +3697,12 @@ paths:
       summary: Recompute User JMAP fast message view projection
       tags:
       - user-mailbox
-  /users/{usernameToBeUsed}/mailboxes?task=subscribeAll:
+  /users/{username}/mailboxes?task=subscribeAll:
     post:
+      operationId: subscribeAllMailboxes
       parameters:
       - in: path
-        name: usernameToBeUsed
+        name: username
         required: true
         schema:
           type: string

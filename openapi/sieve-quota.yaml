@@ -13,6 +13,7 @@ paths:
           description: No default quota is being configured
     put:
       summary: Update global sieve quota
+      operationId: updateGlobalSieveQuota
       requestBody:
         required: true
         content:
@@ -36,6 +37,7 @@ paths:
   /sieve/quota/users/{userEmail}:
     get:
       summary: Retrieve user sieve quota
+      operationId: getUserSieveQuota
       parameters:
         - in: path
           name: userEmail
@@ -50,6 +52,7 @@ paths:
           description: No quota is being configured for this user
     put:
       summary: Update user sieve quota
+      operationId: updateUserSieveQuota
       parameters:
         - in: path
           name: userEmail
@@ -74,6 +77,7 @@ paths:
           description: Invalid payload
     delete:
       summary: Remove user sieve quota
+      operationId: removeUserSieveQuota
       parameters:
         - in: path
           name: userEmail

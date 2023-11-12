@@ -6,6 +6,7 @@ paths:
   /mappings/regex/{mappingSource}/targets/{regex}:
     post:
       summary: Add a regex mapping
+      operationId: addRegexMapping
       parameters:
         - name: mappingSource
           in: path
@@ -30,6 +31,7 @@ paths:
             Invalid regex path parameter.
     delete:
       summary: Remove a regex mapping
+      operationId: removeRegexMapping
       parameters:
         - name: mappingSource
           in: path

@@ -6,6 +6,7 @@ paths:
   /address/forwards:
     get:
       summary: List address forwards
+      operationId: listForwards
       tags:
         - address forward
       responses:
@@ -24,6 +25,7 @@ paths:
   /address/forwards/{userAddress}:
     get:
       summary: List destinations in a forward
+      operationId: listDestinations
       tags:
         - address forward
       parameters:
@@ -56,6 +58,7 @@ paths:
           description: The user doesn't have any forwards or does not exist
     put:
       summary: Add a new destination to a forward
+      operationId: addDestination
       tags:
         - address forward
       parameters:
@@ -88,6 +91,7 @@ paths:
           description: The creation of the forward would lead to a loop and cannot be performed
     delete:
       summary: Remove a destination from a forward
+      operationId: deleteDestination
       tags:
         - address forward
       parameters:
