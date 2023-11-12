@@ -1,0 +1,3596 @@
+components:
+  schemas:
+    Criterion:
+      properties:
+        fieldName:
+          enum:
+          - subject
+          - deliveryDate
+          - deletionDate
+          - sender
+          - recipients
+          - hasAttachment
+          - originMailboxes
+          type: string
+        operator:
+          enum:
+          - contains
+          - containsIgnoreCase
+          - equals
+          - equalsIgnoreCase
+          - beforeOrEquals
+          - afterOrEquals
+          type: string
+        value:
+          type: string
+      type: object
+    DomainAlias:
+      properties:
+        source:
+          description: Source domain alias
+          type: string
+      type: object
+    Error:
+      properties:
+        error:
+          type: string
+      type: object
+    ExecutionReport:
+      properties:
+        additionalInformation:
+          description: Additional information about the task
+          type: object
+        cancelledDate:
+          description: The cancellation date of the task (null if not cancelled)
+          format: date-time
+          nullable: true
+          type: string
+        completedDate:
+          description: The completion date of the task execution
+          format: date-time
+          type: string
+        failedDate:
+          description: The failure date of the task (null if not failed)
+          format: date-time
+          nullable: true
+          type: string
+        startedDate:
+          description: The start date of the task execution
+          format: date-time
+          type: string
+        status:
+          description: The status of the task
+          enum:
+          - waiting
+          - inProgress
+          - cancelled
+          - completed
+          - failed
+          type: string
+        submitDate:
+          description: The submission date of the task
+          format: date-time
+          type: string
+        taskId:
+          description: The ID of the task
+          type: string
+        type:
+          description: The type of the task
+          type: string
+      type: object
+    HealthCheckInfo:
+      properties:
+        componentName:
+          type: string
+        escapedComponentName:
+          type: string
+      type: object
+    HealthCheckResult:
+      properties:
+        cause:
+          nullable: true
+          type: string
+        componentName:
+          type: string
+        escapedComponentName:
+          type: string
+        status:
+          enum:
+          - healthy
+          - degraded
+          - unhealthy
+          type: string
+      type: object
+    Task:
+      properties:
+        addedMessageIdEntries:
+          type: integer
+        errors:
+          items:
+            properties:
+              mailboxId:
+                type: string
+              messageId:
+                type: string
+              uid:
+                type: integer
+            type: object
+          type: array
+        fixedInconsistencies:
+          items:
+            properties:
+              mailboxId:
+                type: string
+              messageId:
+                type: string
+              uid:
+                type: integer
+            type: object
+          type: array
+        processedImapUidEntries:
+          type: integer
+        processedMessageIdEntries:
+          type: integer
+        removedMessageIdEntries:
+          type: integer
+        runningOptions:
+          properties:
+            messagesPerSecond:
+              type: integer
+            mode:
+              enum:
+              - REBUILD_ALL
+              - REBUILD_ALL_NO_CLEANUP
+              - FIX_OUTDATED
+              type: string
+          type: object
+        timestamp:
+          format: date-time
+          type: string
+        type:
+          type: string
+        updatedMessageIdEntries:
+          type: integer
+      type: object
+    TaskId:
+      properties:
+        taskId:
+          description: The ID of the task
+          type: string
+      type: object
+info:
+  title: Apache JAMES Web Admin API
+  version: 3.8.0
+openapi: 3.0.1
+paths:
+  /address/aliases:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  example:
+                  - user1@domain.com
+                  - user2@domain.com
+                  format: email
+                  type: string
+                type: array
+          description: Success
+      summary: List users with aliases
+      tags:
+      - address-alias
+  /address/aliases/{userAddress}:
+    delete:
+      parameters:
+      - description: User mail address
+        example: user@domain.com
+        in: path
+        name: userAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      - description: Alias source mail address
+        example: alias@domain.com
+        in: query
+        name: sourceAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Alias structure or member is not valid
+      summary: Remove an alias from a user
+      tags:
+      - address-alias
+    get:
+      parameters:
+      - description: User mail address
+        example: user@domain.com
+        in: path
+        name: userAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    source:
+                      example: alias1@domain.com
+                      format: email
+                      type: string
+                  type: object
+                type: array
+          description: Success
+        "400":
+          description: Alias structure is not valid
+      summary: List alias sources of a user
+      tags:
+      - address-alias
+    put:
+      parameters:
+      - description: User mail address
+        example: user@domain.com
+        in: path
+        name: userAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      - description: Alias source mail address
+        example: alias@domain.com
+        in: query
+        name: sourceAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: |
+            Alias structure or member is not valid
+            Source and destination cannot be the same
+            Domain in the destination or source is not managed by the DomainList
+        "409":
+          description: |
+            The alias source already exists as a user
+            The creation of the alias would lead to a loop and cannot be performed
+      summary: Add a new alias to a user
+      tags:
+      - address-alias
+  /address/forwards:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  example:
+                  - user1@domain.com
+                  - user2@domain.com
+                  format: email
+                  type: string
+                type: array
+          description: Success
+      summary: List address forwards
+      tags:
+      - address-forward
+  /address/forwards/{userAddress}:
+    delete:
+      parameters:
+      - description: User mail address
+        example: user@domain.com
+        in: path
+        name: userAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      - description: Destination mail address
+        example: destination@domain.com
+        in: query
+        name: destinationAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Forward structure or member is not valid
+      summary: Remove a destination from a forward
+      tags:
+      - address-forward
+    get:
+      parameters:
+      - description: User mail address
+        example: user@domain.com
+        in: path
+        name: userAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    mailAddress:
+                      example: destination1@domain.com
+                      format: email
+                      type: string
+                  type: object
+                type: array
+          description: Success
+        "400":
+          description: Forward structure is not valid
+        "404":
+          description: The user doesn't have any forwards or does not exist
+      summary: List destinations in a forward
+      tags:
+      - address-forward
+    put:
+      parameters:
+      - description: User mail address
+        example: user@domain.com
+        in: path
+        name: userAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      - description: Destination mail address
+        example: destination@domain.com
+        in: query
+        name: destinationAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: |
+            Forward structure or member is not valid
+            Domain in the source is not managed by the DomainList
+        "404":
+          description: Requested forward address does not match an existing user
+        "409":
+          description: The creation of the forward would lead to a loop and cannot
+            be performed
+      summary: Add a new destination to a forward
+      tags:
+      - address-forward
+  /address/groups:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  example:
+                  - group1@domain.com
+                  - group2@domain.com
+                  format: email
+                  type: string
+                type: array
+          description: Success
+      summary: List address groups
+      tags:
+      - address-group
+  /address/groups/{groupAddress}:
+    delete:
+      parameters:
+      - description: Group mail address
+        example: group@domain.com
+        in: path
+        name: groupAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      - description: Member mail address
+        example: member@domain.com
+        in: query
+        name: memberAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Group structure or member is not valid
+      summary: Remove a group member
+      tags:
+      - address-group
+    get:
+      parameters:
+      - description: Group mail address
+        example: group@domain.com
+        in: path
+        name: groupAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  example:
+                  - member1@domain.com
+                  - member2@domain.com
+                  format: email
+                  type: string
+                type: array
+          description: Success
+        "400":
+          description: Group structure is not valid
+        "404":
+          description: The group does not exist
+      summary: List members of a group
+      tags:
+      - address-group
+    put:
+      parameters:
+      - description: Group mail address
+        example: group@domain.com
+        in: path
+        name: groupAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      - description: Member mail address
+        example: member@domain.com
+        in: query
+        name: memberAddress
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Group structure or member is not valid
+        "409":
+          description: Requested group address is already used for another purpose
+            or would cause a loop
+      summary: Add a group member
+      tags:
+      - address-group
+  /blobs:
+    delete:
+      parameters:
+      - description: Specifies the scope of garbage collection (e.g., "unreferenced"
+          blobs)
+        in: query
+        name: scope
+        required: true
+        schema:
+          enum:
+          - unreferenced
+          type: string
+      - in: query
+        name: associatedProbability
+        schema:
+          default: 0.01
+          description: Targeted false positive rate for the bloom filter
+          format: double
+          maximum: 1
+          minimum: 0
+          type: number
+      - in: query
+        name: expectedBlobCount
+        schema:
+          default: 1000000
+          description: Expected count of blobs used to size the bloom filters
+          minimum: 1
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  blobCount:
+                    description: Count of blobs tried against the bloom filter
+                    type: integer
+                  bloomFilterAssociatedProbability:
+                    description: Supplied associatedProbability query parameter
+                    format: double
+                    type: number
+                  bloomFilterExpectedBlobCount:
+                    description: Supplied expectedBlobCount query parameter
+                    type: integer
+                  gcedBlobCount:
+                    description: Count of blobs that were garbage collected
+                    type: integer
+                  referenceSourceCount:
+                    description: Count of distinct blob references encountered while
+                      populating the bloom filter
+                    type: integer
+                type: object
+          description: Blob garbage collection task created
+      summary: Run blob garbage collection
+      tags:
+      - garbage-collection
+  /cassandra/mailbox/merging:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                mergeDestination: '{id2}'
+                mergeOrigin: '{id1}'
+              properties:
+                mergeDestination:
+                  description: The ID of the destination mailbox (new mailbox)
+                  type: string
+                mergeOrigin:
+                  description: The ID of the mailbox to be merged (ghosted mailbox)
+                  type: string
+              type: object
+        description: Parameters for merging mailboxes
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                properties:
+                  additionalInformation:
+                    example:
+                      messageFailedCount: 0
+                      messageMovedCount: 1
+                      newMailboxId: 4555159-52ae-895f-ccb7-586a4412fb50
+                      oldMailboxId: 5641376-02ed-47bd-bcc7-76ff6262d92a
+                      totalMessageCount: 1
+                    properties:
+                      messageFailedCount:
+                        type: integer
+                      messageMovedCount:
+                        type: integer
+                      newMailboxId:
+                        type: string
+                      oldMailboxId:
+                        type: string
+                      totalMessageCount:
+                        type: integer
+                    type: object
+                  taskId:
+                    type: string
+                  type:
+                    type: string
+                type: object
+          description: Task generation succeeded. Corresponding task ID is returned
+        "400":
+          description: Unable to parse the request body.
+      summary: Correct ghost mailbox by merging
+      tags:
+      - ghost-mailbox
+  /cassandra/mappings:
+    post:
+      parameters:
+      - description: The action to perform on mappings_sources table
+        in: query
+        name: action
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                properties:
+                  taskId:
+                    description: The ID of the created task
+                    type: string
+                type: object
+          description: Task ID of the created task
+        "400":
+          description: Invalid action argument for performing operation on mappings
+            data
+      summary: Perform an action on mappings_sources table
+      tags:
+      - cassandra-extra
+  /cassandra/version:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example:
+                  version: 2
+                properties:
+                  version:
+                    type: integer
+                type: object
+          description: Success. The current Cassandra schema version is returned
+      summary: Retrieve current Cassandra schema version
+      tags:
+      - cassandra-schema-upgrade
+  /cassandra/version/latest:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example:
+                  version: 3
+                properties:
+                  version:
+                    type: integer
+                type: object
+          description: Success. The latest available Cassandra schema version is returned
+      summary: Retrieve latest available Cassandra schema version
+      tags:
+      - cassandra-schema-upgrade
+  /cassandra/version/upgrade:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                version: 3
+              properties:
+                version:
+                  type: integer
+              type: object
+        description: The target schema version to upgrade to
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  additionalInformation:
+                    example:
+                      targetVersion: 3
+                    properties:
+                      targetVersion:
+                        type: integer
+                    type: object
+                  taskId:
+                    type: string
+                  type:
+                    type: string
+                type: object
+          description: Success. The migration task has been scheduled
+        "400":
+          description: The version is invalid. The version should be a strictly positive
+            number.
+        "410":
+          description: Error while planning this migration. This resource is gone
+            away. Reason is mentioned in the body.
+      summary: Upgrade to a specific Cassandra schema version
+      tags:
+      - cassandra-schema-upgrade
+  /cassandra/version/upgrade/latest:
+    post:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  additionalInformation:
+                    example:
+                      toVersion: 2
+                    properties:
+                      toVersion:
+                        type: integer
+                    type: object
+                  taskId:
+                    type: string
+                  type:
+                    type: string
+                type: object
+          description: Success. The migration task has been scheduled
+        "410":
+          description: Error while planning this migration. This resource is gone
+            away. Reason is mentioned in the body.
+      summary: Upgrade to the latest Cassandra schema version
+      tags:
+      - cassandra-schema-upgrade
+  /deletedMessages:
+    delete:
+      parameters:
+      - description: The scope of messages to purge
+        in: query
+        name: scope
+        required: true
+        schema:
+          enum:
+          - expired
+          type: string
+      responses:
+        "201":
+          description: Task for purging expired messages has been created
+        "400":
+          description: Bad request. Invalid parameters
+        "404":
+          description: User not found
+      summary: Purge all expired deleted messages
+      tags:
+      - deleted-message-vault
+  /deletedMessages/users/{user}/actions/export:
+    post:
+      parameters:
+      - description: The user to export deleted messages from
+        in: path
+        name: user
+        required: true
+        schema:
+          type: string
+      - description: The email address to export the messages to
+        in: query
+        name: exportTo
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                combinator:
+                  enum:
+                  - and
+                  - or
+                  type: string
+                criteria:
+                  items:
+                    $ref: '#/components/schemas/Criterion'
+                  type: array
+              type: object
+        required: true
+      responses:
+        "201":
+          description: Task for exporting deleted messages has been created
+        "400":
+          description: Bad request. Invalid parameters or JSON body
+        "404":
+          description: User not found
+      summary: Export deleted messages for a specific user
+      tags:
+      - deleted-message-vault
+  /deletedMessages/users/{user}/actions/restore:
+    post:
+      parameters:
+      - description: The user to restore deleted messages for
+        in: path
+        name: user
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                combinator:
+                  enum:
+                  - and
+                  - or
+                  type: string
+                criteria:
+                  items:
+                    $ref: '#/components/schemas/Criterion'
+                  type: array
+              type: object
+        required: true
+      responses:
+        "201":
+          description: Task for restoring deleted messages has been created
+        "400":
+          description: Bad request. Invalid parameters or JSON body
+        "404":
+          description: User not found
+      summary: Restore deleted messages for a specific user
+      tags:
+      - deleted-message-vault
+  /deletedMessages/users/{user}/messages/{messageId}:
+    delete:
+      parameters:
+      - description: The user of the deleted message
+        in: path
+        name: user
+        required: true
+        schema:
+          type: string
+      - description: The ID of the deleted message
+        in: path
+        name: messageId
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Task for deleting the message has been created
+        "400":
+          description: Bad request. Invalid parameters
+        "404":
+          description: User not found
+      summary: Permanently remove a deleted message
+      tags:
+      - deleted-message-vault
+  /dlp/rules/{senderDomain}:
+    delete:
+      parameters:
+      - in: path
+        name: senderDomain
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: DLP configuration is removed
+        "400":
+          description: Invalid senderDomain or payload in request
+        "404":
+          description: The domain does not exist
+      summary: Remove DLP configuration by sender domain
+      tags:
+      - dlp
+    get:
+      parameters:
+      - in: path
+        name: senderDomain
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List of DLP configuration items
+        "400":
+          description: Invalid senderDomain or payload in request
+        "404":
+          description: The domain does not exist
+      summary: List DLP configuration by sender domain
+      tags:
+      - dlp
+    put:
+      parameters:
+      - in: path
+        name: senderDomain
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                rules:
+                  items:
+                    properties:
+                      explanation:
+                        description: Description of the configuration item
+                        type: string
+                      expression:
+                        description: Regular expression to match contents of targets
+                        type: string
+                      id:
+                        description: Unique identifier of the configuration item
+                        type: string
+                      targetsContent:
+                        description: Indicates if the expression should be applied
+                          to the subject headers and textual bodies of the mail
+                        type: boolean
+                      targetsRecipients:
+                        description: Indicates if the expression should be applied
+                          to the recipients of the mail
+                        type: boolean
+                      targetsSender:
+                        description: Indicates if the expression should be applied
+                          to the sender and from headers of the mail
+                        type: boolean
+                    type: object
+                  type: array
+              type: object
+        required: true
+      responses:
+        "204":
+          description: List of DLP configuration items is stored
+        "400":
+          description: Invalid senderDomain or payload in request
+        "404":
+          description: The domain does not exist
+      summary: Store DLP configuration by sender domain
+      tags:
+      - dlp
+  /dlp/rules/{senderDomain}/rules/{ruleId}:
+    get:
+      parameters:
+      - in: path
+        name: senderDomain
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: ruleId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A DLP configuration item is returned
+        "400":
+          description: Invalid senderDomain or payload in request
+        "404":
+          description: The domain and/or the rule does not exist
+      summary: Fetch a DLP configuration item by sender domain and rule id
+      tags:
+      - dlp
+  /domainMappings:
+    delete:
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              example: destination.tld
+              format: hostname
+              type: string
+        required: true
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: |
+            The fromDomain resource name is invalid
+            The destination domain specified in the body is invalid
+      summary: Remove a domain mapping
+      tags:
+      - domain-mapping
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  items:
+                    example:
+                    - firstDestination.com
+                    - secondDestination.net
+                    format: hostname
+                    type: string
+                  type: array
+                type: object
+          description: OK
+      summary: List all domain mappings
+      tags:
+      - domain-mapping
+    put:
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              example: destination.tld
+              format: hostname
+              type: string
+        required: true
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: |
+            The fromDomain resource name is invalid
+            The destination domain specified in the body is invalid
+      summary: Add a domain mapping
+      tags:
+      - domain-mapping
+  /domainMappings/{fromDomain}:
+    get:
+      parameters:
+      - description: Source domain name
+        example: sourceDomain.tld
+        in: path
+        name: fromDomain
+        required: true
+        schema:
+          format: hostname
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  example:
+                  - firstDestination.com
+                  - secondDestination.com
+                  format: hostname
+                  type: string
+                type: array
+          description: OK
+        "400":
+          description: The fromDomain resource name is invalid
+        "404":
+          description: The fromDomain resource name is not found
+      summary: List all destination domains for a source domain
+      tags:
+      - domain-mapping
+  /domains:
+    get:
+      operationId: getDomainList
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: The domain list was successfully retrieved
+      summary: Get the list of domains
+      tags:
+      - domains
+  /domains/{domainName}:
+    get:
+      operationId: testDomainExists
+      parameters:
+      - description: Name of the domain to be tested
+        in: path
+        name: domainName
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The domain exists
+        "404":
+          description: The domain does not exist
+      summary: Test if a domain exists
+      tags:
+      - domains
+  /domains/{domainName}/aliases:
+    delete:
+      operationId: deleteDomainAlias
+      parameters:
+      - description: Name of the destination domain for the alias
+        in: path
+        name: domainName
+        required: true
+        schema:
+          type: string
+      - description: Name of the source domain for the alias
+        in: query
+        name: sourceDomainName
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The redirection now no longer exists
+        "400":
+          description: source.domain.tld or destination.domain.tld have an invalid
+            syntax
+        "404":
+          description: source.domain.tld is not part of handled domains
+      summary: Delete an alias for a domain
+      tags:
+      - domains
+    get:
+      operationId: getDomainAliases
+      parameters:
+      - description: Name of the domain to retrieve aliases for
+        in: path
+        name: domainName
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DomainAlias'
+                type: array
+          description: The domain aliases were successfully retrieved
+        "400":
+          description: destination.domain.tld has an invalid syntax
+        "404":
+          description: destination.domain.tld is not part of handled domains and does
+            not have local domains as aliases.
+      summary: Get the list of aliases for a domain
+      tags:
+      - domains
+    put:
+      operationId: createDomainAlias
+      parameters:
+      - description: Name of the destination domain for the alias
+        in: path
+        name: domainName
+        required: true
+        schema:
+          type: string
+      - description: Name of the source domain for the alias
+        in: query
+        name: sourceDomainName
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The redirection now exists
+        "400":
+          description: source.domain.tld or destination.domain.tld have an invalid
+            syntax
+        "404":
+          description: source.domain.tld is not part of handled domains
+      summary: Create an alias for a domain
+      tags:
+      - domains
+  /domains/{domainToBeCreated}:
+    put:
+      operationId: createDomain
+      parameters:
+      - description: Name of the domain to be created
+        in: path
+        name: domainToBeCreated
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The domain was successfully added
+        "400":
+          description: The domain name is invalid
+      summary: Create a domain
+      tags:
+      - domains
+  /domains/{domainToBeDeleted}:
+    delete:
+      operationId: deleteDomain
+      parameters:
+      - description: Name of the domain to be deleted
+        in: path
+        name: domainToBeDeleted
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The domain was successfully removed
+      summary: Delete a domain
+      tags:
+      - domains
+  /domains/{domainToBeUsed}:
+    post:
+      operationId: deleteUserDataOfDomain
+      parameters:
+      - description: Name of the domain to delete user data from
+        in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                action:
+                  enum:
+                  - deleteData
+                  type: string
+              required:
+              - action
+              type: object
+      responses:
+        "201":
+          description: Success. Corresponding task id is returned
+        "400":
+          description: Error in the request. Details can be found in the reported
+            error
+      summary: Delete all users data of a domain
+      tags:
+      - domains
+  /events/deadLetter/groups:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - org.apache.james.mailbox.events.EventBusTestFixture$GroupA
+              - org.apache.james.mailbox.events.GenericGroup-abc
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Success. A list of group names is returned.
+      summary: List Mailbox Listener Groups
+      tags:
+      - event-dead-letter
+    post:
+      responses:
+        "201":
+          description: Task created successfully. The taskId of the created task is
+            returned.
+        "400":
+          description: Invalid action argument
+      summary: Redeliver all events
+      tags:
+      - event-dead-letter
+  /events/deadLetter/groups/{groupName}:
+    delete:
+      parameters:
+      - description: The name of the mailbox listener group
+        in: path
+        name: groupName
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Invalid group name
+      summary: Delete all events of a group
+      tags:
+      - event-dead-letter
+    get:
+      parameters:
+      - description: The name of the mailbox listener group
+        in: path
+        name: groupName
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Success. A list of insertion ids is returned.
+        "400":
+          description: Invalid group name
+      summary: List failed events for a given group
+      tags:
+      - event-dead-letter
+  /events/deadLetter/groups/{groupName}/{insertionId}:
+    delete:
+      parameters:
+      - description: The name of the mailbox listener group
+        in: path
+        name: groupName
+        required: true
+        schema:
+          type: string
+      - description: The insertion ID of the event
+        in: path
+        name: insertionId
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Invalid group name or insertionId
+      summary: Delete an event
+      tags:
+      - event-dead-letter
+    get:
+      parameters:
+      - description: The name of the mailbox listener group
+        in: path
+        name: groupName
+        required: true
+        schema:
+          type: string
+      - description: The insertion ID of the event
+        in: path
+        name: insertionId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success. A JSON representing this event is returned.
+        "400":
+          description: Invalid group name or insertionId
+        "404":
+          description: No event with this insertionId
+      summary: Get event details
+      tags:
+      - event-dead-letter
+  /events/deadLetter/groups/{groupName}/{insertionId}/reDeliver:
+    post:
+      parameters:
+      - description: The name of the mailbox listener group
+        in: path
+        name: groupName
+        required: true
+        schema:
+          type: string
+      - description: The insertion ID of the event
+        in: path
+        name: insertionId
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Task created successfully. The taskId of the created task is
+            returned.
+        "400":
+          description: Invalid group name, insertion id, or action argument
+        "404":
+          description: No event with this insertionId
+      summary: Redeliver a single event
+      tags:
+      - event-dead-letter
+  /events/deadLetter/groups/{groupName}/reDeliver:
+    post:
+      parameters:
+      - description: The name of the mailbox listener group
+        in: path
+        name: groupName
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Task created successfully. The taskId of the created task is
+            returned.
+        "400":
+          description: Invalid group name or action argument
+      summary: Redeliver group events
+      tags:
+      - event-dead-letter
+  /healthcheck:
+    get:
+      operationId: checkAllComponents
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  checks:
+                    items:
+                      $ref: '#/components/schemas/HealthCheckResult'
+                    type: array
+                  status:
+                    description: Aggregated status of all checks
+                    enum:
+                    - healthy
+                    - degraded
+                    - unhealthy
+                    type: string
+                type: object
+          description: Health check results
+      summary: Check all components
+      tags:
+      - healthcheck
+  /healthcheck/checks:
+    get:
+      operationId: listAllHealthChecks
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/HealthCheckInfo'
+                type: array
+          description: List of available health checks
+      summary: List all health checks
+      tags:
+      - healthcheck
+  /healthcheck/checks/{componentName}:
+    get:
+      operationId: checkSingleComponent
+      parameters:
+      - description: URL encoded name of the component
+        in: path
+        name: componentName
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResult'
+          description: Health check result for the component
+        "404":
+          description: Component not found
+        "503":
+          description: Unhealthy status for the component
+      summary: Check single component
+      tags:
+      - healthcheck
+  /jmap/uploads:
+    delete:
+      parameters:
+      - description: Specifies the scope of cleanup (e.g., "expired" uploads)
+        in: query
+        name: scope
+        required: true
+        schema:
+          enum:
+          - expired
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                scope:
+                  description: Specifies the scope of cleanup (e.g., "expired" uploads)
+                  enum:
+                  - expired
+                  type: string
+                timestamp:
+                  description: Timestamp of the task creation
+                  format: date-time
+                  type: string
+                type:
+                  description: Type of the task
+                  example: UploadRepositoryCleanupTask
+                  type: string
+              type: object
+        description: Task details
+        required: false
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                properties:
+                  taskId:
+                    description: Identifier of the scheduled task
+                    type: string
+                type: object
+          description: Task scheduled successfully
+        "400":
+          description: Invalid scope parameter value
+      summary: Clean upload repository
+      tags:
+      - jmap-uploads
+  /mail-transfer-service:
+    post:
+      requestBody:
+        content:
+          message/rfc822:
+            schema:
+              description: MIME message representing the email
+              type: string
+        required: true
+      responses:
+        "200":
+          description: Email sent successfully
+        "400":
+          description: Invalid request
+      summary: Send email
+      tags:
+      - send-mail
+  /mailQueues:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              example: '["outgoing","spool"]'
+          description: List of mail queues
+      summary: List mail queues
+      tags:
+      - mail-queue
+    post:
+      parameters:
+      - description: Republish action (RepublishNotProcessedMails)
+        in: query
+        name: action
+        required: true
+        schema:
+          type: string
+      - description: Older than duration (e.g., 5h, 7d, 1y)
+        in: query
+        name: olderThan
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                taskId: a650a66a-5984-431e-bdad-f1baad885856
+          description: Task created
+        "400":
+          description: Invalid request
+      summary: RabbitMQ republishing a mail queue from Cassandra
+      tags:
+      - mail-queue
+  /mailQueues/{mailQueueName}:
+    patch:
+      parameters:
+      - description: Name of the mail queue
+        in: path
+        name: mailQueueName
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                delayed:
+                  type: boolean
+              type: object
+        required: true
+      responses:
+        "204":
+          description: Success (No content)
+        "400":
+          description: Invalid request
+        "404":
+          description: Mail queue does not exist
+      summary: Flush mails from a mail queue
+      tags:
+      - mail-queue
+  /mailQueues/{mailQueueName}/mails:
+    delete:
+      parameters:
+      - description: Name of the mail queue
+        in: path
+        name: mailQueueName
+        required: true
+        schema:
+          type: string
+      - description: Sender mail address
+        in: query
+        name: sender
+        schema:
+          type: string
+      - description: Mail name
+        in: query
+        name: name
+        schema:
+          type: string
+      - description: Recipient mail address
+        in: query
+        name: recipient
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              example:
+                taskId: a650a66a-5984-431e-bdad-f1baad885856
+          description: Task generation succeeded. Corresponding task id is returned.
+        "400":
+          description: Invalid request
+        "404":
+          description: Mail queue does not exist
+      summary: Delete mails from a mail queue
+      tags:
+      - mail-queue
+    get:
+      parameters:
+      - description: Name of the mail queue
+        in: path
+        name: mailQueueName
+        required: true
+        schema:
+          type: string
+      - description: Maximum number of mails returned in a single call
+        in: query
+        name: limit
+        schema:
+          format: int32
+          minimum: 1
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    nextDelivery:
+                      format: date-time
+                      type: string
+                    recipients:
+                      items:
+                        type: string
+                      type: array
+                    sender:
+                      type: string
+                  type: object
+                type: array
+          description: List of mails
+        "400":
+          description: Mail queue is not valid or limit is invalid
+        "404":
+          description: Mail queue does not exist
+      summary: List mails of a mail queue
+      tags:
+      - mail-queue
+  /mailRepositories:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example:
+                - path: var%2Fmail%2Ferror%2F
+                  repository: var/mail/error/
+                - path: var%2Fmail%2Frelay-denied%2F
+                  repository: var/mail/relay-denied/
+                - path: var%2Fmail%2Fspam%2F
+                  repository: var/mail/spam/
+                - path: var%2Fmail%2Faddress-error%2F
+                  repository: var/mail/address-error/
+                items:
+                  properties:
+                    path:
+                      type: string
+                    repository:
+                      type: string
+                  type: object
+                type: array
+          description: The list of mail repositories
+      summary: Listing mail repositories
+      tags:
+      - mail-repository
+  /mailRepositories/{encodedPathOfTheRepository}:
+    get:
+      parameters:
+      - description: Encoded resource path of an existing mail repository
+        in: path
+        name: encodedPathOfTheRepository
+        required: true
+        schema:
+          example: var%2Fmail%2Ferror%2F
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  path:
+                    type: string
+                  repository:
+                    type: string
+                  size:
+                    type: integer
+                type: object
+          description: Additional information for that repository
+        "404":
+          description: This repository cannot be found
+      summary: Getting additional information for a mail repository
+      tags:
+      - mail-repository
+    put:
+      parameters:
+      - description: Encoded resource path of the created mail repository
+        in: path
+        name: encodedPathOfTheRepository
+        required: true
+        schema:
+          example: mailRepo
+          type: string
+      - description: Protocol of the mail repository
+        in: query
+        name: protocol
+        required: true
+        schema:
+          example: file
+          type: string
+      responses:
+        "204":
+          description: The repository is created
+      summary: Create a mail repository
+      tags:
+      - mail-repository
+  /mailRepositories/{encodedPathOfTheRepository}/mails:
+    get:
+      parameters:
+      - description: Encoded resource path of an existing mail repository
+        in: path
+        name: encodedPathOfTheRepository
+        required: true
+        schema:
+          example: var%2Fmail%2Ferror%2F
+          type: string
+      - description: Limit the number of returned elements
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: int32
+          minimum: 1
+          type: integer
+      - description: Skip the specified number of elements
+        in: query
+        name: offset
+        required: false
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example:
+                - mail-key-1
+                - mail-key-2
+                - mail-key-3
+                items:
+                  type: string
+                type: array
+          description: The list of mail keys contained in that mail repository
+        "400":
+          description: This repository can not be found
+      summary: Listing mails contained in a mail repository
+      tags:
+      - mail-repository
+  /mailboxes:
+    post:
+      parameters:
+      - description: Comma-separated list of actions to perform on mailboxes
+        in: query
+        name: action
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                properties:
+                  taskId:
+                    type: string
+                type: object
+          description: Success. Task ID is returned.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Error in the request. Details can be found in the reported
+            error.
+      summary: Perform actions on mailboxes
+      tags:
+      - mailbox
+  /mailboxes/{mailboxId}:
+    post:
+      parameters:
+      - description: ID of the mailbox to reindex
+        in: path
+        name: mailboxId
+        required: true
+        schema:
+          type: string
+      - description: The reindexing task to perform
+        in: query
+        name: task
+        required: true
+        schema:
+          type: string
+      - description: The rate at which messages should be processed per second
+        in: query
+        name: messagesPerSecond
+        schema:
+          minimum: 1
+          type: integer
+      - description: The reindexing mode used
+        in: query
+        name: mode
+        schema:
+          enum:
+          - rebuildAll
+          - rebuildAllNoCleanup
+          - fixOutdated
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                properties:
+                  taskId:
+                    type: string
+                type: object
+          description: Success. Task ID is returned.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Error in the request. Details can be found in the reported
+            error.
+      summary: Reindex a mailbox
+      tags:
+      - mailbox
+  /mailboxes?task=populateFilteringProjection:
+    post:
+      responses:
+        "201":
+          description: Success. Corresponding task ID is returned
+        "400":
+          description: Error in the request. Details can be found in the reported
+            error
+      summary: Recompute Cassandra filtering projection
+      tags:
+      - user-mailbox
+  /mappings:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example:
+                  alias@domain.tld:
+                  - mapping: user@domain.tld
+                    type: Alias
+                  - mapping: group-user@domain.tld
+                    type: Group
+                  aliasdomain.tld:
+                  - mapping: realdomain.tld
+                    type: Domain
+                  group@domain.tld:
+                  - mapping: user@domain.tld
+                    type: Address
+                properties:
+                  mappingSource:
+                    items:
+                      properties:
+                        mapping:
+                          type: string
+                        type:
+                          enum:
+                          - Alias
+                          - Address
+                          - Domain
+                          - Error
+                          - Forward
+                          - Group
+                          - Regex
+                          type: string
+                      type: object
+                    type: array
+                type: object
+          description: OK
+      summary: List all address mappings
+      tags:
+      - address-mapping
+    post:
+      parameters:
+      - description: Mapping source (recipient address)
+        in: path
+        name: mappingSource
+        required: true
+        schema:
+          example: alias@domain.tld
+          type: string
+      - description: Mapping destination (address)
+        in: path
+        name: destinationAddress
+        required: true
+        schema:
+          example: user@domain.tld
+          type: string
+      responses:
+        "204":
+          description: Action successfully performed
+        "400":
+          description: Invalid parameters
+        "409":
+          description: The creation of the address mapping would lead to a loop and
+            cannot be performed
+      summary: Add an address mapping
+      tags:
+      - address-mapping
+  /mappings/address/{mappingSource}/targets/{destinationAddress}:
+    delete:
+      parameters:
+      - description: Mapping source (recipient address)
+        in: path
+        name: mappingSource
+        required: true
+        schema:
+          example: alias@domain.tld
+          type: string
+      - description: Mapping destination (address)
+        in: path
+        name: destinationAddress
+        required: true
+        schema:
+          example: user@domain.tld
+          type: string
+      responses:
+        "204":
+          description: Action successfully performed
+        "400":
+          description: Invalid parameters
+      summary: Remove an address mapping
+      tags:
+      - address-mapping
+  /mappings/regex/{mappingSource}/targets/{regex}:
+    delete:
+      parameters:
+      - description: Mapping source (recipient address)
+        in: path
+        name: mappingSource
+        required: true
+        schema:
+          example: james@domain.tld
+          type: string
+      - description: Java Regular Expression (regex)
+        in: path
+        name: regex
+        required: true
+        schema:
+          example: '[O_O]:james-intern@james.org'
+          type: string
+      responses:
+        "204":
+          description: Mapping deleted successfully.
+        "400":
+          description: |
+            Invalid mappingSource path parameter.
+            Invalid regex path parameter.
+      summary: Remove a regex mapping
+      tags:
+      - regex-mapping
+    post:
+      parameters:
+      - description: Mapping source (recipient address)
+        in: path
+        name: mappingSource
+        required: true
+        schema:
+          example: james@domain.tld
+          type: string
+      - description: Java Regular Expression (regex)
+        in: path
+        name: regex
+        required: true
+        schema:
+          example: james@.*:james-intern@james.org
+          type: string
+      responses:
+        "204":
+          description: Mapping added successfully.
+        "400":
+          description: |
+            Invalid mappingSource path parameter.
+            Invalid regex path parameter.
+      summary: Add a regex mapping
+      tags:
+      - regex-mapping
+  /mappings/user/{userAddress}:
+    get:
+      parameters:
+      - description: User address
+        in: path
+        name: userAddress
+        required: true
+        schema:
+          example: user123@domain.tld
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example:
+                - mapping: user123@domain.tld
+                  type: Address
+                - mapping: aliasuser123@domain.tld
+                  type: Alias
+                - mapping: group123@domain.tld
+                  type: Group
+                items:
+                  properties:
+                    mapping:
+                      type: string
+                    type:
+                      enum:
+                      - Address
+                      - Alias
+                      - Group
+                      type: string
+                  type: object
+                type: array
+          description: OK
+        "400":
+          description: Invalid parameter value
+      summary: Listing User Mappings
+      tags:
+      - user-mapping
+  /messages:
+    post:
+      parameters:
+      - description: Task type for fixing message inconsistencies
+        in: query
+        name: task
+        required: true
+        schema:
+          type: string
+      - description: Rate of messages to be processed per second
+        in: query
+        name: messagesPerSecond
+        schema:
+          minimum: 1
+          type: integer
+      - description: Reindexing mode used
+        in: query
+        name: mode
+        schema:
+          enum:
+          - rebuildAll
+          - rebuildAllNoCleanup
+          - fixOutdated
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                properties:
+                  taskId:
+                    type: string
+                type: object
+          description: Success. Task ID is returned.
+        "400":
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                type: object
+          description: Error in the request. Details can be found in the reported
+            error.
+      summary: Schedule a task for fixing message inconsistencies
+      tags:
+      - messages
+  /messages/{messageId}:
+    post:
+      parameters:
+      - description: Implementation-dependent valid messageId
+        in: path
+        name: messageId
+        required: true
+        schema:
+          type: string
+      - description: Task type for reindexing
+        in: query
+        name: task
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                properties:
+                  taskId:
+                    type: string
+                type: object
+          description: Success. Task ID is returned.
+        "400":
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    type: string
+                type: object
+          description: Error in the request. Details can be found in the reported
+            error.
+      summary: Reindex a single mail by messageId
+      tags:
+      - messages
+  /quota:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example:
+                  count: 252
+                  size: 242
+                properties:
+                  count:
+                    type: integer
+                  size:
+                    type: integer
+                type: object
+          description: Success. The global quota details are returned
+      summary: Get the global quota
+      tags:
+      - global-quota
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                count: 52
+                size: 42
+              properties:
+                count:
+                  type: integer
+                size:
+                  type: integer
+              type: object
+        description: The new global quota
+        required: true
+      responses:
+        "204":
+          description: The global quota has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+      summary: Update the global quota
+      tags:
+      - global-quota
+  /quota/count:
+    delete:
+      responses:
+        "204":
+          description: The global quota count has been updated to an unlimited value
+      summary: Delete the global quota count
+      tags:
+      - global-quota
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example: 52
+                type: integer
+          description: Success. The global quota count is returned
+        "204":
+          description: No quota count limit is defined at the global level
+      summary: Get the global quota count
+      tags:
+      - global-quota
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: 52
+              minimum: -1
+              type: integer
+        description: The new global quota count
+        required: true
+      responses:
+        "204":
+          description: The global quota count has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+      summary: Update the global quota count
+      tags:
+      - global-quota
+  /quota/domains/{domainToBeUsed}:
+    get:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success. The domain's quota details are returned
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Get the quota for a domain
+      tags:
+      - domain-quota
+    put:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                count: 52
+                size: 42
+              properties:
+                count:
+                  type: integer
+                size:
+                  type: integer
+              type: object
+        description: The new quota for the domain
+        required: true
+      responses:
+        "204":
+          description: The quota has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Update the quota for a domain
+      tags:
+      - domain-quota
+  /quota/domains/{domainToBeUsed}/count:
+    delete:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The quota count has been updated to an unlimited value
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Delete the quota count for a domain
+      tags:
+      - domain-quota
+    get:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success. The domain's quota count is returned
+        "204":
+          description: No quota count limit is defined at the domain level for this
+            domain
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Get the quota count for a domain
+      tags:
+      - domain-quota
+    put:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: 52
+              minimum: -1
+              type: integer
+        description: The new quota count for the domain
+        required: true
+      responses:
+        "204":
+          description: The quota count has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Update the quota count for a domain
+      tags:
+      - domain-quota
+  /quota/domains/{domainToBeUsed}/size:
+    delete:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The quota size has been updated to an unlimited value
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Delete the quota size for a domain
+      tags:
+      - domain-quota
+    get:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success. The domain's quota size is returned
+        "204":
+          description: No quota size limit is defined at the domain level for this
+            domain
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Get the quota size for a domain
+      tags:
+      - domain-quota
+    put:
+      parameters:
+      - in: path
+        name: domainToBeUsed
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: 52
+              minimum: -1
+              type: integer
+        description: The new quota size for the domain
+        required: true
+      responses:
+        "204":
+          description: The quota size has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+        "404":
+          description: The domain does not exist
+        "405":
+          description: Domain Quota configuration not supported when virtual hosting
+            is deactivated.
+      summary: Update the quota size for a domain
+      tags:
+      - domain-quota
+  /quota/size:
+    delete:
+      responses:
+        "204":
+          description: The global quota size has been updated to an unlimited value
+      summary: Delete the global quota size
+      tags:
+      - global-quota
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                example: 52
+                type: integer
+          description: Success. The global quota size is returned
+        "204":
+          description: No quota size limit is defined at the global level
+      summary: Get the global quota size
+      tags:
+      - global-quota
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: 52
+              minimum: -1
+              type: integer
+        description: The new global quota size
+        required: true
+      responses:
+        "204":
+          description: The global quota size has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+      summary: Update the global quota size
+      tags:
+      - global-quota
+  /quota/users:
+    get:
+      parameters:
+      - description: The minimum occupation ratio of users to be returned
+        in: query
+        name: minOccupationRatio
+        schema:
+          maximum: 1
+          minimum: 0
+          type: number
+      - description: The maximum occupation ratio of users to be returned
+        in: query
+        name: maxOccupationRatio
+        schema:
+          maximum: 1
+          minimum: 0
+          type: number
+      - description: The maximum number of users to be returned
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: The number of users to skip
+        in: query
+        name: offset
+        schema:
+          type: integer
+      - description: The domain of users to be returned
+        in: query
+        name: domain
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List of users with quota details
+        "400":
+          description: Validation issues with parameters
+      summary: Search users by quota ratio
+      tags:
+      - user-quota
+    post:
+      parameters:
+      - in: query
+        name: task
+        required: true
+        schema:
+          enum:
+          - RecomputeCurrentQuotas
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                usersPerSecond: 20
+              properties:
+                usersPerSecond:
+                  minimum: 1
+                  type: integer
+              type: object
+        description: Additional task options
+      responses:
+        "201":
+          description: Success. Corresponding task ID is returned
+        "400":
+          description: Error in the request. Details can be found in the reported
+            error
+      summary: Recompute current quotas for users
+      tags:
+      - user-quota
+  /quota/users/{usernameToBeUsed}:
+    get:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success. The user's quota details are returned
+        "404":
+          description: The user does not exist
+      summary: Get the quota for a user
+      tags:
+      - user-quota
+    put:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                count: 52
+                size: 42
+              properties:
+                count:
+                  type: integer
+                size:
+                  type: integer
+              type: object
+        description: The new quota for the user
+        required: true
+      responses:
+        "204":
+          description: The quota has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+        "404":
+          description: The user does not exist
+      summary: Update the quota for a user
+      tags:
+      - user-quota
+  /quota/users/{usernameToBeUsed}/count:
+    delete:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The quota count has been updated to an unlimited value
+        "404":
+          description: The user does not exist
+      summary: Delete the quota count for a user
+      tags:
+      - user-quota
+    get:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success. The user's quota count is returned
+        "204":
+          description: No quota count limit is defined for the user
+        "404":
+          description: The user does not exist
+      summary: Get the quota count for a user
+      tags:
+      - user-quota
+    put:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: 52
+              minimum: -1
+              type: integer
+        description: The new quota count for the user
+        required: true
+      responses:
+        "204":
+          description: The quota count has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+        "404":
+          description: The user does not exist
+      summary: Update the quota count for a user
+      tags:
+      - user-quota
+  /quota/users/{usernameToBeUsed}/size:
+    delete:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The quota size has been updated to an unlimited value
+        "404":
+          description: The user does not exist
+      summary: Delete the quota size for a user
+      tags:
+      - user-quota
+    get:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success. The user's quota size is returned
+        "204":
+          description: No quota size limit is defined for the user
+        "404":
+          description: The user does not exist
+      summary: Get the quota size for a user
+      tags:
+      - user-quota
+    put:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example: 42
+              minimum: -1
+              type: integer
+        description: The new quota size for the user
+        required: true
+      responses:
+        "204":
+          description: The quota size has been updated
+        "400":
+          description: The body is not a positive integer or an unlimited value (-1)
+        "404":
+          description: The user does not exist
+      summary: Update the quota size for a user
+      tags:
+      - user-quota
+  /sieve/quota/default:
+    delete:
+      responses:
+        "204":
+          description: Operation succeeded
+      summary: Remove global sieve quota
+      tags:
+      - sieve-quota
+    get:
+      responses:
+        "200":
+          description: Request is a success and the value is returned
+        "204":
+          description: No default quota is being configured
+      summary: Retrieve global sieve quota
+      tags:
+      - sieve-quota
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bytes:
+                  description: Bytes count allowed by user per default on this server
+                  type: integer
+              type: object
+        required: true
+      responses:
+        "204":
+          description: Operation succeeded
+        "400":
+          description: Invalid payload
+      summary: Update global sieve quota
+      tags:
+      - sieve-quota
+  /sieve/quota/users/{userEmail}:
+    delete:
+      parameters:
+      - in: path
+        name: userEmail
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "204":
+          description: Operation succeeded
+      summary: Remove user sieve quota
+      tags:
+      - sieve-quota
+    get:
+      parameters:
+      - in: path
+        name: userEmail
+        required: true
+        schema:
+          format: email
+          type: string
+      responses:
+        "200":
+          description: Request is a success and the value is returned
+        "204":
+          description: No quota is being configured for this user
+      summary: Retrieve user sieve quota
+      tags:
+      - sieve-quota
+    put:
+      parameters:
+      - in: path
+        name: userEmail
+        required: true
+        schema:
+          format: email
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bytes:
+                  description: Bytes count allowed for this user on this server
+                  type: integer
+              type: object
+        required: true
+      responses:
+        "204":
+          description: Operation succeeded
+        "400":
+          description: Invalid payload
+      summary: Update user sieve quota
+      tags:
+      - sieve-quota
+  /tasks:
+    get:
+      parameters:
+      - description: The status of the tasks (waiting, inProgress, canceledRequested,
+          completed, canceled, failed)
+        in: query
+        name: status
+        schema:
+          type: string
+      - description: The type of the tasks
+        in: query
+        name: type
+        schema:
+          type: string
+      - description: Return tasks submitted before this date
+        in: query
+        name: submittedBefore
+        schema:
+          format: date-time
+          type: string
+      - description: Return tasks submitted after this date
+        in: query
+        name: submittedAfter
+        schema:
+          format: date-time
+          type: string
+      - description: Return tasks started before this date
+        in: query
+        name: startedBefore
+        schema:
+          format: date-time
+          type: string
+      - description: Return tasks started after this date
+        in: query
+        name: startedAfter
+        schema:
+          format: date-time
+          type: string
+      - description: Return tasks completed before this date
+        in: query
+        name: completedBefore
+        schema:
+          format: date-time
+          type: string
+      - description: Return tasks completed after this date
+        in: query
+        name: completedAfter
+        schema:
+          format: date-time
+          type: string
+      - description: Return tasks failed before this date
+        in: query
+        name: failedBefore
+        schema:
+          format: date-time
+          type: string
+      - description: Return tasks failed after this date
+        in: query
+        name: failedAfter
+        schema:
+          format: date-time
+          type: string
+      - description: Number of tasks to skip in the response
+        in: query
+        name: offset
+        schema:
+          format: int32
+          type: integer
+      - description: Maximum number of tasks to return in one call
+        in: query
+        name: limit
+        schema:
+          format: int32
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ExecutionReport'
+                type: array
+          description: List of corresponding tasks
+        "400":
+          description: Invalid status value
+      summary: List tasks
+      tags:
+      - task
+  /tasks/{taskId}:
+    delete:
+      parameters:
+      - description: The ID of the task
+        in: path
+        name: taskId
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Task has been cancelled
+        "400":
+          description: Invalid task ID
+      summary: Cancel a task
+      tags:
+      - task
+    get:
+      parameters:
+      - description: The ID of the task
+        in: path
+        name: taskId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionReport'
+          description: Execution report of the task
+        "400":
+          description: Invalid task ID
+        "404":
+          description: Task ID not found
+      summary: Get a task's details
+      tags:
+      - task
+  /tasks/{taskId}/await:
+    get:
+      parameters:
+      - description: The ID of the task
+        in: path
+        name: taskId
+        required: true
+        schema:
+          type: string
+      - description: The timeout duration in the format Nunit (e.g., 30s, 5m, 7d,
+          1y)
+        in: query
+        name: timeout
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionReport'
+          description: Execution report of the task
+        "400":
+          description: Invalid task ID or invalid timeout
+        "404":
+          description: Task ID not found
+        "408":
+          description: Timeout reached
+      summary: Await the completion of a task
+      tags:
+      - task
+  /users:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    username:
+                      type: string
+                  type: object
+                type: array
+          description: The user name list was successfully retrieved
+      summary: Retrieve the user list
+      tags:
+      - users
+  /users/{baseUser}/authorizedUsers:
+    delete:
+      parameters:
+      - in: path
+        name: baseUser
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Removal of the delegated users succeeded
+        "404":
+          description: The base user does not exist
+      summary: Remove all delegated users of a base user
+      tags:
+      - users
+    get:
+      parameters:
+      - in: path
+        name: baseUser
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: The list was successfully retrieved
+      summary: Retrieve the list of delegated users of a base user
+      tags:
+      - users
+  /users/{baseUser}/authorizedUsers/delegatedUser:
+    delete:
+      parameters:
+      - in: path
+        name: baseUser
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: delegatedUser
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Removal of the delegated user succeeded
+        "400":
+          description: The delegated user does not exist
+        "404":
+          description: The base user does not exist
+      summary: Remove a delegated user from a base user
+      tags:
+      - users
+    put:
+      parameters:
+      - in: path
+        name: baseUser
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: delegatedUser
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Addition of the delegated user succeeded
+        "400":
+          description: The delegated user does not exist
+        "404":
+          description: The base user does not exist
+      summary: Add a delegated user to a base user
+      tags:
+      - users
+  /users/{givenUser}/allowedFromHeaders:
+    get:
+      parameters:
+      - in: path
+        name: givenUser
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: The list was successfully retrieved
+      summary: Retrieve the list of allowed From headers for a given user
+      tags:
+      - users
+  /users/{oldUser}/rename/{newUser}:
+    post:
+      parameters:
+      - in: path
+        name: oldUser
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: newUser
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: action
+        required: true
+        schema:
+          enum:
+          - rename
+          type: string
+      responses:
+        "201":
+          description: Success. Corresponding task id is returned.
+        "400":
+          description: Error in the request. Details can be found in the reported
+            error
+      summary: Change a username
+      tags:
+      - users
+  /users/{username}:
+    delete:
+      parameters:
+      - description: The username to be deleted
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The user was successfully deleted
+      summary: Delete a user
+      tags:
+      - users
+    head:
+      parameters:
+      - description: The username to be tested
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The user exists
+        "400":
+          description: The username is invalid
+        "404":
+          description: The user does not exist
+      summary: Test user existence
+      tags:
+      - users
+    put:
+      parameters:
+      - description: The username of the user to be created or updated
+        in: path
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: Indicates whether to force update the password (for updating
+          password only)
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                password:
+                  type: string
+              required:
+              - password
+              type: object
+        required: true
+      responses:
+        "204":
+          description: The user was successfully created or the password was successfully
+            updated
+        "400":
+          description: The user name or the payload is invalid
+        "409":
+          description: The user name already exists
+      summary: Create or Update User
+      tags:
+      - users
+  /users/{username}/identities:
+    get:
+      parameters:
+      - in: path
+        name: username
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: default
+        schema:
+          type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    bcc:
+                      items:
+                        properties:
+                          email:
+                            type: string
+                          name:
+                            type: string
+                        type: object
+                      type: array
+                    email:
+                      type: string
+                    htmlSignature:
+                      type: string
+                    id:
+                      type: string
+                    mayDelete:
+                      type: boolean
+                    name:
+                      type: string
+                    replyTo:
+                      items:
+                        properties:
+                          email:
+                            type: string
+                          name:
+                            type: string
+                        type: object
+                      type: array
+                    sortOrder:
+                      type: integer
+                    textSignature:
+                      type: string
+                  type: object
+                type: array
+          description: The list was successfully retrieved
+      summary: Retrieve the user identities
+      tags:
+      - users
+    post:
+      parameters:
+      - in: path
+        name: username
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bcc:
+                  items:
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                    type: object
+                  type: array
+                email:
+                  type: string
+                htmlSignature:
+                  type: string
+                mayDelete:
+                  type: boolean
+                name:
+                  type: string
+                replyTo:
+                  items:
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                    type: object
+                  type: array
+                sortOrder:
+                  type: integer
+                textSignature:
+                  type: string
+              type: object
+        required: true
+      responses:
+        "201":
+          description: The new identity was successfully created
+        "400":
+          description: The payload is invalid
+        "404":
+          description: The username is unknown
+      summary: Create a JMAP user identity
+      tags:
+      - users
+  /users/{username}/identities/{identityId}:
+    put:
+      parameters:
+      - in: path
+        name: username
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: identityId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bcc:
+                  items:
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                    type: object
+                  type: array
+                htmlSignature:
+                  type: string
+                name:
+                  type: string
+                replyTo:
+                  items:
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                    type: object
+                  type: array
+                sortOrder:
+                  type: integer
+                textSignature:
+                  type: string
+              type: object
+        required: true
+      responses:
+        "204":
+          description: The identity was successfully updated
+        "400":
+          description: The payload is invalid
+        "404":
+          description: The username is unknown
+      summary: Update a JMAP user identity
+      tags:
+      - users
+  /users/{usernameToBeUsed}/mailboxes:
+    delete:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The user does not have mailboxes anymore
+        "404":
+          description: The user name does not exist
+      summary: Delete user mailboxes
+      tags:
+      - user-mailbox
+    get:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    mailboxName:
+                      type: string
+                  type: object
+                type: array
+          description: The mailboxes list was successfully retrieved
+        "404":
+          description: The user name does not exist
+      summary: List user mailboxes
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messageCount:
+    get:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: mailboxName
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The number of emails in the given mailbox
+        "400":
+          description: Invalid mailbox name
+        "404":
+          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName
+            does not exist
+      summary: Count emails in a mailbox
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messages:
+    delete:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: mailboxName
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Success. Corresponding task ID is returned
+        "400":
+          description: Invalid mailbox name
+        "404":
+          description: Invalid get on user mailboxes. The username or mailboxName
+            does not exist
+      summary: Clear mailbox content
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/unseenMessageCount:
+    get:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: mailboxName
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The number of unseen emails in the given mailbox
+        "400":
+          description: Invalid mailbox name
+        "404":
+          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName
+            does not exist
+      summary: Count unseen emails in a mailbox
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeCreated}:
+    put:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: mailboxNameToBeCreated
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The mailbox now exists on the server
+        "400":
+          description: Invalid mailbox name
+        "404":
+          description: The user name does not exist
+      summary: Create a mailbox
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeTested}:
+    get:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: mailboxNameToBeTested
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The mailbox exists
+        "400":
+          description: Invalid mailbox name
+        "404":
+          description: The user name does not exist, or the mailbox does not exist
+      summary: Test existence of a mailbox
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes/INBOX.work:
+    delete:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: mailboxNameToBeDeleted
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The mailbox now does not exist on the server
+        "400":
+          description: Invalid mailbox name
+        "404":
+          description: The user name does not exist
+      summary: Delete a mailbox and its children
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes?action=export:
+    post:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Success. Corresponding task ID is returned
+        "404":
+          description: The user name does not exist
+      summary: Export user mailboxes
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes?task=reIndex:
+    post:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: messagesPerSecond
+        schema:
+          default: 50
+          minimum: 1
+          type: integer
+      - in: query
+        name: mode
+        schema:
+          default: rebuildAll
+          enum:
+          - rebuildAll
+          - rebuildAllNoCleanup
+          - fixOutdated
+          type: string
+      responses:
+        "201":
+          description: Success. Corresponding task ID is returned
+        "400":
+          description: Error in the request. Details can be found in the reported
+            error
+        "404":
+          description: User not found
+      summary: Reindex a user's mails
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes?task=recomputeFastViewProjectionItems:
+    post:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: messagesPerSecond
+        schema:
+          default: 10
+          minimum: 1
+          type: integer
+      responses:
+        "201":
+          description: Success. Corresponding task ID is returned
+        "400":
+          description: Error in the request. Details can be found in the reported
+            error
+        "404":
+          description: User not found
+      summary: Recompute User JMAP fast message view projection
+      tags:
+      - user-mailbox
+  /users/{usernameToBeUsed}/mailboxes?task=subscribeAll:
+    post:
+      parameters:
+      - in: path
+        name: usernameToBeUsed
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Success. Corresponding task ID is returned
+        "404":
+          description: No such user
+      summary: Subscribe a user to all of their mailboxes
+      tags:
+      - user-mailbox

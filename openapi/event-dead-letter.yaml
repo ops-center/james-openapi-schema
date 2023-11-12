@@ -5,7 +5,7 @@ info:
 paths:
   /events/deadLetter/groups:
     get:
-      summary: List mailbox listener groups
+      summary: List Mailbox Listener Groups
       responses:
         '200':
           description: Success. A list of group names is returned.
@@ -15,8 +15,9 @@ paths:
                 type: array
                 items:
                   type: string
-      requestBody:
-        required: false
+              example:
+                - "org.apache.james.mailbox.events.EventBusTestFixture$GroupA"
+                - "org.apache.james.mailbox.events.GenericGroup-abc"
     post:
       summary: Redeliver all events
       responses:
