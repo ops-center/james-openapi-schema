@@ -1,0 +1,40 @@
+openapi: 3.0.0
+info:
+  title: User Mapping API
+  version: 1.0.0
+paths:
+  /mappings/user/{userAddress}:
+    get:
+      summary: Listing User Mappings
+      parameters:
+        - name: userAddress
+          in: path
+          description: User address
+          required: true
+          schema:
+            type: string
+            example: "user123@domain.tld"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [Address, Alias, Group]
+                    mapping:
+                      type: string
+                example:
+                  - type: Address
+                    mapping: user123@domain.tld
+                  - type: Alias
+                    mapping: aliasuser123@domain.tld
+                  - type: Group
+                    mapping: group123@domain.tld
+        '400':
+          description: Invalid parameter value

@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: Cassandra Schema Upgrade API
+  version: 1.0.0
+paths:
+  /cassandra/version:
+    get:
+      summary: Retrieve current Cassandra schema version
+      responses:
+        '200':
+          description: Success. The current Cassandra schema version is returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: integer
+                example:
+                  version: 2
+
+  /cassandra/version/latest:
+    get:
+      summary: Retrieve latest available Cassandra schema version
+      responses:
+        '200':
+          description: Success. The latest available Cassandra schema version is returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: integer
+                example:
+                  version: 3
+
+  /cassandra/version/upgrade:
+    post:
+      summary: Upgrade to a specific Cassandra schema version
+      requestBody:
+        description: The target schema version to upgrade to
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                version:
+                  type: integer
+              example:
+                version: 3
+      responses:
+        '200':
+          description: Success. The migration task has been scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                  type:
+                    type: string
+                  additionalInformation:
+                    type: object
+                    properties:
+                      targetVersion:
+                        type: integer
+                    example:
+                      targetVersion: 3
+        '400':
+          description: The version is invalid. The version should be a strictly positive number.
+        '410':
+          description: Error while planning this migration. This resource is gone away. Reason is mentioned in the body.
+
+  /cassandra/version/upgrade/latest:
+    post:
+      summary: Upgrade to the latest Cassandra schema version
+      responses:
+        '200':
+          description: Success. The migration task has been scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                  type:
+                    type: string
+                  additionalInformation:
+                    type: object
+                    properties:
+                      toVersion:
+                        type: integer
+                    example:
+                      toVersion: 2
+        '410':
+          description: Error while planning this migration. This resource is gone away. Reason is mentioned in the body.

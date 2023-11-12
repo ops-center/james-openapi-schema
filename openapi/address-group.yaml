@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: Address Group API
+  version: 1.0.0
+paths:
+  /address/groups:
+    get:
+      summary: List address groups
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: email
+                  example:
+                    - "group1@domain.com"
+                    - "group2@domain.com"
+  /address/groups/{groupAddress}:
+    get:
+      summary: List members of a group
+      parameters:
+        - name: groupAddress
+          in: path
+          description: Group mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "group@domain.com"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: email
+                  example:
+                    - "member1@domain.com"
+                    - "member2@domain.com"
+        '400':
+          description: Group structure is not valid
+        '404':
+          description: The group does not exist
+    put:
+      summary: Add a group member
+      parameters:
+        - name: groupAddress
+          in: path
+          description: Group mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "group@domain.com"
+        - name: memberAddress
+          in: query
+          description: Member mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "member@domain.com"
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Group structure or member is not valid
+        '409':
+          description: Requested group address is already used for another purpose or would cause a loop
+    delete:
+      summary: Remove a group member
+      parameters:
+        - name: groupAddress
+          in: path
+          description: Group mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "group@domain.com"
+        - name: memberAddress
+          in: query
+          description: Member mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "member@domain.com"
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Group structure or member is not valid

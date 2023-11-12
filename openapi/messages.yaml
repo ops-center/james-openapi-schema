@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  title: Message Administration API
+  version: 1.0.0
+paths:
+  /messages/{messageId}:
+    post:
+      summary: Reindex a single mail by messageId
+      parameters:
+        - name: messageId
+          in: path
+          description: Implementation-dependent valid messageId
+          required: true
+          schema:
+            type: string
+        - name: task
+          in: query
+          description: Task type for reindexing
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Success. Task ID is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+        '400':
+          description: Error in the request. Details can be found in the reported error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /messages:
+    post:
+      summary: Schedule a task for fixing message inconsistencies
+      parameters:
+        - name: task
+          in: query
+          description: Task type for fixing message inconsistencies
+          required: true
+          schema:
+            type: string
+        - name: messagesPerSecond
+          in: query
+          description: Rate of messages to be processed per second
+          schema:
+            type: integer
+            minimum: 1
+        - name: mode
+          in: query
+          description: Reindexing mode used
+          schema:
+            type: string
+            enum: [rebuildAll, rebuildAllNoCleanup, fixOutdated]
+      responses:
+        '201':
+          description: Success. Task ID is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+        '400':
+          description: Error in the request. Details can be found in the reported error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        type:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        processedImapUidEntries:
+          type: integer
+        processedMessageIdEntries:
+          type: integer
+        addedMessageIdEntries:
+          type: integer
+        updatedMessageIdEntries:
+          type: integer
+        removedMessageIdEntries:
+          type: integer
+        runningOptions:
+          type: object
+          properties:
+            messagesPerSecond:
+              type: integer
+            mode:
+              type: string
+              enum: [REBUILD_ALL, REBUILD_ALL_NO_CLEANUP, FIX_OUTDATED]
+        fixedInconsistencies:
+          type: array
+          items:
+            type: object
+            properties:
+              mailboxId:
+                type: string
+              messageId:
+                type: string
+              uid:
+                type: integer
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              mailboxId:
+                type: string
+              messageId:
+                type: string
+              uid:
+                type: integer

@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  title: Deleted Messages Vault API
+  version: 1.0.0
+paths:
+  /deletedMessages/users/{user}/actions/restore:
+    post:
+      summary: Restore deleted messages for a specific user
+      parameters:
+        - in: path
+          name: user
+          required: true
+          schema:
+            type: string
+          description: The user to restore deleted messages for
+      responses:
+        '201':
+          description: Task for restoring deleted messages has been created
+        '400':
+          description: Bad request. Invalid parameters or JSON body
+        '404':
+          description: User not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                combinator:
+                  type: string
+                  enum: [and, or]
+                criteria:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Criterion'
+
+  /deletedMessages/users/{user}/actions/export:
+    post:
+      summary: Export deleted messages for a specific user
+      parameters:
+        - in: path
+          name: user
+          required: true
+          schema:
+            type: string
+          description: The user to export deleted messages from
+        - in: query
+          name: exportTo
+          required: true
+          schema:
+            type: string
+          description: The email address to export the messages to
+      responses:
+        '201':
+          description: Task for exporting deleted messages has been created
+        '400':
+          description: Bad request. Invalid parameters or JSON body
+        '404':
+          description: User not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                combinator:
+                  type: string
+                  enum: [and, or]
+                criteria:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Criterion'
+
+  /deletedMessages:
+    delete:
+      summary: Purge all expired deleted messages
+      parameters:
+        - in: query
+          name: scope
+          required: true
+          schema:
+            type: string
+            enum: [expired]
+          description: The scope of messages to purge
+      responses:
+        '201':
+          description: Task for purging expired messages has been created
+        '400':
+          description: Bad request. Invalid parameters
+        '404':
+          description: User not found
+
+  /deletedMessages/users/{user}/messages/{messageId}:
+    delete:
+      summary: Permanently remove a deleted message
+      parameters:
+        - in: path
+          name: user
+          required: true
+          schema:
+            type: string
+          description: The user of the deleted message
+        - in: path
+          name: messageId
+          required: true
+          schema:
+            type: string
+          description: The ID of the deleted message
+      responses:
+        '201':
+          description: Task for deleting the message has been created
+        '400':
+          description: Bad request. Invalid parameters
+        '404':
+          description: User not found
+
+components:
+  schemas:
+    Criterion:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          enum: [subject, deliveryDate, deletionDate, sender, recipients, hasAttachment, originMailboxes]
+        operator:
+          type: string
+          enum: [contains, containsIgnoreCase, equals, equalsIgnoreCase, beforeOrEquals, afterOrEquals]
+        value:
+          type: string

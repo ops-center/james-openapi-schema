@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: Regex Mapping API
+  version: 1.0.0
+paths:
+  /mappings/regex/{mappingSource}/targets/{regex}:
+    post:
+      summary: Add a regex mapping
+      parameters:
+        - name: mappingSource
+          in: path
+          description: Mapping source (recipient address)
+          required: true
+          schema:
+            type: string
+            example: "james@domain.tld"
+        - name: regex
+          in: path
+          description: Java Regular Expression (regex)
+          required: true
+          schema:
+            type: string
+            example: "james@.*:james-intern@james.org"
+      responses:
+        '204':
+          description: Mapping added successfully.
+        '400':
+          description: |
+            Invalid mappingSource path parameter.
+            Invalid regex path parameter.
+    delete:
+      summary: Remove a regex mapping
+      parameters:
+        - name: mappingSource
+          in: path
+          description: Mapping source (recipient address)
+          required: true
+          schema:
+            type: string
+            example: "james@domain.tld"
+        - name: regex
+          in: path
+          description: Java Regular Expression (regex)
+          required: true
+          schema:
+            type: string
+            example: "[O_O]:james-intern@james.org"
+      responses:
+        '204':
+          description: Mapping deleted successfully.
+        '400':
+          description: |
+            Invalid mappingSource path parameter.
+            Invalid regex path parameter.

@@ -1,0 +1,265 @@
+openapi: 3.0.0
+info:
+  title: Mailbox Management API
+  version: 1.0.0
+paths:
+  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeCreated}:
+    put:
+      summary: Create a mailbox
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mailboxNameToBeCreated
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The mailbox now exists on the server
+        '400':
+          description: Invalid mailbox name
+        '404':
+          description: The user name does not exist
+
+  /users/{usernameToBeUsed}/mailboxes/INBOX.work:
+    delete:
+      summary: Delete a mailbox and its children
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mailboxNameToBeDeleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The mailbox now does not exist on the server
+        '400':
+          description: Invalid mailbox name
+        '404':
+          description: The user name does not exist
+
+  /users/{usernameToBeUsed}/mailboxes/{mailboxNameToBeTested}:
+    get:
+      summary: Test existence of a mailbox
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mailboxNameToBeTested
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The mailbox exists
+        '400':
+          description: Invalid mailbox name
+        '404':
+          description: The user name does not exist, or the mailbox does not exist
+
+  /users/{usernameToBeUsed}/mailboxes:
+    get:
+      summary: List user mailboxes
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The mailboxes list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mailboxName:
+                      type: string
+        '404':
+          description: The user name does not exist
+
+    delete:
+      summary: Delete user mailboxes
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The user does not have mailboxes anymore
+        '404':
+          description: The user name does not exist
+
+  /users/{usernameToBeUsed}/mailboxes?action=export:
+    post:
+      summary: Export user mailboxes
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Success. Corresponding task ID is returned
+        '404':
+          description: The user name does not exist
+
+  /users/{usernameToBeUsed}/mailboxes?task=reIndex:
+    post:
+      summary: Reindex a user's mails
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: messagesPerSecond
+          schema:
+            type: integer
+            minimum: 1
+            default: 50
+        - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [rebuildAll, rebuildAllNoCleanup, fixOutdated]
+            default: rebuildAll
+      responses:
+        '201':
+          description: Success. Corresponding task ID is returned
+        '400':
+          description: Error in the request. Details can be found in the reported error
+        '404':
+          description: User not found
+
+  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messageCount:
+    get:
+      summary: Count emails in a mailbox
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mailboxName
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The number of emails in the given mailbox
+        '400':
+          description: Invalid mailbox name
+        '404':
+          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName does not exist
+
+  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/unseenMessageCount:
+    get:
+      summary: Count unseen emails in a mailbox
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mailboxName
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The number of unseen emails in the given mailbox
+        '400':
+          description: Invalid mailbox name
+        '404':
+          description: Invalid get on user mailboxes. The usernameToBeUsed or mailboxName does not exist
+
+  /users/{usernameToBeUsed}/mailboxes/{mailboxName}/messages:
+    delete:
+      summary: Clear mailbox content
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mailboxName
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Success. Corresponding task ID is returned
+        '400':
+          description: Invalid mailbox name
+        '404':
+          description: Invalid get on user mailboxes. The username or mailboxName does not exist
+
+  /users/{usernameToBeUsed}/mailboxes?task=subscribeAll:
+    post:
+      summary: Subscribe a user to all of their mailboxes
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Success. Corresponding task ID is returned
+        '404':
+          description: No such user
+
+  /users/{usernameToBeUsed}/mailboxes?task=recomputeFastViewProjectionItems:
+    post:
+      summary: Recompute User JMAP fast message view projection
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: messagesPerSecond
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+      responses:
+        '201':
+          description: Success. Corresponding task ID is returned
+        '400':
+          description: Error in the request. Details can be found in the reported error
+        '404':
+          description: User not found
+
+  /mailboxes?task=populateFilteringProjection:
+    post:
+      summary: Recompute Cassandra filtering projection
+      responses:
+        '201':
+          description: Success. Corresponding task ID is returned
+        '400':
+          description: Error in the request. Details can be found in the reported error

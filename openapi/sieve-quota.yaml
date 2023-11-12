@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: Sieve Quota API
+  version: 1.0.0
+paths:
+  /sieve/quota/default:
+    get:
+      summary: Retrieve global sieve quota
+      responses:
+        '200':
+          description: Request is a success and the value is returned
+        '204':
+          description: No default quota is being configured
+    put:
+      summary: Update global sieve quota
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bytes:
+                  type: integer
+                  description: Bytes count allowed by user per default on this server
+      responses:
+        '204':
+          description: Operation succeeded
+        '400':
+          description: Invalid payload
+    delete:
+      summary: Remove global sieve quota
+      responses:
+        '204':
+          description: Operation succeeded
+  /sieve/quota/users/{userEmail}:
+    get:
+      summary: Retrieve user sieve quota
+      parameters:
+        - in: path
+          name: userEmail
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Request is a success and the value is returned
+        '204':
+          description: No quota is being configured for this user
+    put:
+      summary: Update user sieve quota
+      parameters:
+        - in: path
+          name: userEmail
+          required: true
+          schema:
+            type: string
+            format: email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bytes:
+                  type: integer
+                  description: Bytes count allowed for this user on this server
+      responses:
+        '204':
+          description: Operation succeeded
+        '400':
+          description: Invalid payload
+    delete:
+      summary: Remove user sieve quota
+      parameters:
+        - in: path
+          name: userEmail
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '204':
+          description: Operation succeeded

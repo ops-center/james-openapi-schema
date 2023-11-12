@@ -1,0 +1,185 @@
+openapi: 3.0.0
+info:
+  title: Mail Queue Administration API
+  version: 1.0.0
+paths:
+  /mailQueues:
+    get:
+      summary: List mail queues
+      responses:
+        '200':
+          description: List of mail queues
+          content:
+            application/json:
+              example: '["outgoing","spool"]'
+    post:
+      summary: RabbitMQ republishing a mail queue from Cassandra
+      parameters:
+        - in: query
+          name: action
+          schema:
+            type: string
+          required: true
+          description: Republish action (RepublishNotProcessedMails)
+        - in: query
+          name: olderThan
+          schema:
+            type: string
+          required: true
+          description: Older than duration (e.g., 5h, 7d, 1y)
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              example: {"taskId": "a650a66a-5984-431e-bdad-f1baad885856"}
+        '400':
+          description: Invalid request
+  /mailQueues/{mailQueueName}:
+    get:
+      summary: Get mail queue details
+      parameters:
+        - in: path
+          name: mailQueueName
+          schema:
+            type: string
+          required: true
+          description: Name of the mail queue
+      responses:
+        '200':
+          description: Mail queue details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  size:
+                    type: integer
+                    format: int32
+        '400':
+          description: Mail queue is not valid
+        '404':
+          description: Mail queue does not exist
+    delete:
+      summary: Clear a mail queue
+      parameters:
+        - in: path
+          name: mailQueueName
+          schema:
+            type: string
+          required: true
+          description: Name of the mail queue
+      responses:
+        '201':
+          description: Task generation succeeded. Corresponding task id is returned.
+          content:
+            application/json:
+              example: {"taskId": "a650a66a-5984-431e-bdad-f1baad885856"}
+        '400':
+          description: Invalid request
+        '404':
+          description: Mail queue does not exist
+  /mailQueues/{mailQueueName}/mails:
+    get:
+      summary: List mails of a mail queue
+      parameters:
+        - in: path
+          name: mailQueueName
+          schema:
+            type: string
+          required: true
+          description: Name of the mail queue
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+          description: Maximum number of mails returned in a single call
+      responses:
+        '200':
+          description: List of mails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    sender:
+                      type: string
+                    recipients:
+                      type: array
+                      items:
+                        type: string
+                    nextDelivery:
+                      type: string
+                      format: date-time
+        '400':
+          description: Mail queue is not valid or limit is invalid
+        '404':
+          description: Mail queue does not exist
+    delete:
+      summary: Delete mails from a mail queue
+      parameters:
+        - in: path
+          name: mailQueueName
+          schema:
+            type: string
+          required: true
+          description: Name of the mail queue
+        - in: query
+          name: sender
+          schema:
+            type: string
+          description: Sender mail address
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Mail name
+        - in: query
+          name: recipient
+          schema:
+            type: string
+          description: Recipient mail address
+      responses:
+        '201':
+          description: Task generation succeeded. Corresponding task id is returned.
+          content:
+            application/json:
+              example: {"taskId": "a650a66a-5984-431e-bdad-f1baad885856"}
+        '400':
+          description: Invalid request
+        '404':
+          description: Mail queue does not exist
+  /mailQueues/{mailQueueName}:
+    patch:
+      summary: Flush mails from a mail queue
+      parameters:
+        - in: path
+          name: mailQueueName
+          schema:
+            type: string
+          required: true
+          description: Name of the mail queue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                delayed:
+                  type: boolean
+      responses:
+        '204':
+          description: Success (No content)
+        '400':
+          description: Invalid request
+        '404':
+          description: Mail queue does not exist

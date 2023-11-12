@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  title: Address Alias API
+  version: 1.0.0
+paths:
+  /address/aliases:
+    get:
+      summary: List users with aliases
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: email
+                  example:
+                    - "user1@domain.com"
+                    - "user2@domain.com"
+  /address/aliases/{userAddress}:
+    get:
+      summary: List alias sources of a user
+      parameters:
+        - name: userAddress
+          in: path
+          description: User mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "user@domain.com"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    source:
+                      type: string
+                      format: email
+                      example: "alias1@domain.com"
+                    # Add more properties if needed
+        '400':
+          description: Alias structure is not valid
+    put:
+      summary: Add a new alias to a user
+      parameters:
+        - name: userAddress
+          in: path
+          description: User mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "user@domain.com"
+        - name: sourceAddress
+          in: query
+          description: Alias source mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "alias@domain.com"
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: |
+            Alias structure or member is not valid
+            Source and destination cannot be the same
+            Domain in the destination or source is not managed by the DomainList
+        '409':
+          description: |
+            The alias source already exists as a user
+            The creation of the alias would lead to a loop and cannot be performed
+    delete:
+      summary: Remove an alias from a user
+      parameters:
+        - name: userAddress
+          in: path
+          description: User mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "user@domain.com"
+        - name: sourceAddress
+          in: query
+          description: Alias source mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "alias@domain.com"
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Alias structure or member is not valid

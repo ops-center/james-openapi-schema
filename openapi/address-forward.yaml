@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Address Forward API
+  version: 1.0.0
+paths:
+  /address/forwards:
+    get:
+      summary: List address forwards
+      tags:
+        - address forward
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: email
+                  example:
+                    - "user1@domain.com"
+                    - "user2@domain.com"
+  /address/forwards/{userAddress}:
+    get:
+      summary: List destinations in a forward
+      tags:
+        - address forward
+      parameters:
+        - name: userAddress
+          in: path
+          description: User mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "user@domain.com"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mailAddress:
+                      type: string
+                      format: email
+                      example: "destination1@domain.com"
+                    # Add more properties if needed
+        '400':
+          description: Forward structure is not valid
+        '404':
+          description: The user doesn't have any forwards or does not exist
+    put:
+      summary: Add a new destination to a forward
+      tags:
+        - address forward
+      parameters:
+        - name: userAddress
+          in: path
+          description: User mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "user@domain.com"
+        - name: destinationAddress
+          in: query
+          description: Destination mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "destination@domain.com"
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: |
+            Forward structure or member is not valid
+            Domain in the source is not managed by the DomainList
+        '404':
+          description: Requested forward address does not match an existing user
+        '409':
+          description: The creation of the forward would lead to a loop and cannot be performed
+    delete:
+      summary: Remove a destination from a forward
+      tags:
+        - address forward
+      parameters:
+        - name: userAddress
+          in: path
+          description: User mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "user@domain.com"
+        - name: destinationAddress
+          in: query
+          description: Destination mail address
+          required: true
+          schema:
+            type: string
+            format: email
+          example: "destination@domain.com"
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Forward structure or member is not valid

@@ -1,0 +1,37 @@
+openapi: 3.0.0
+info:
+  title: Cassandra Extra Operations API
+  version: 1.0.0
+paths:
+  /cassandra/mappings:
+    post:
+      summary: Perform an action on mappings_sources table
+      parameters:
+        - in: query
+          name: action
+          required: true
+          schema:
+            type: string
+          description: The action to perform on mappings_sources table
+      responses:
+        '201':
+          description: Task ID of the created task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                    description: The ID of the created task
+        '400':
+          description: Invalid action argument for performing operation on mappings data
+
+components:
+  schemas:
+    TaskId:
+      type: object
+      properties:
+        taskId:
+          type: string
+          description: The ID of the task

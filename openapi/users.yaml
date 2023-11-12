@@ -1,0 +1,362 @@
+openapi: 3.0.0
+info:
+  title: User Administration API
+  version: 1.0.0
+paths:
+  /users/{username}:
+    put:
+      summary: Create or Update User
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username of the user to be created or updated
+          schema:
+            type: string
+        - name: force
+          in: query
+          required: false
+          description: Indicates whether to force update the password (for updating password only)
+          schema:
+            type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+              required:
+                - password
+      responses:
+        '204':
+          description: The user was successfully created or the password was successfully updated
+        '400':
+          description: The user name or the payload is invalid
+        '409':
+          description: The user name already exists
+
+    head:
+      summary: Test user existence
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username to be tested
+      responses:
+        '200':
+          description: The user exists
+        '400':
+          description: The username is invalid
+        '404':
+          description: The user does not exist
+
+    delete:
+      summary: Delete a user
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username to be deleted
+      responses:
+        '204':
+          description: The user was successfully deleted
+
+  /users:
+    get:
+      summary: Retrieve the user list
+      responses:
+        '200':
+          description: The user name list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+  /users/{givenUser}/allowedFromHeaders:
+    get:
+      summary: Retrieve the list of allowed From headers for a given user
+      parameters:
+        - name: givenUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /users/{baseUser}/authorizedUsers/delegatedUser:
+    put:
+      summary: Add a delegated user to a base user
+      parameters:
+        - name: baseUser
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: delegatedUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Addition of the delegated user succeeded
+        '404':
+          description: The base user does not exist
+        '400':
+          description: The delegated user does not exist
+    delete:
+      summary: Remove a delegated user from a base user
+      parameters:
+        - name: baseUser
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: delegatedUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Removal of the delegated user succeeded
+        '404':
+          description: The base user does not exist
+        '400':
+          description: The delegated user does not exist
+  /users/{baseUser}/authorizedUsers:
+    get:
+      summary: Retrieve the list of delegated users of a base user
+      parameters:
+        - name: baseUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    delete:
+      summary: Remove all delegated users of a base user
+      parameters:
+        - name: baseUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Removal of the delegated users succeeded
+        '404':
+          description: The base user does not exist
+  /users/{oldUser}/rename/{newUser}:
+    post:
+      summary: Change a username
+      parameters:
+        - name: oldUser
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: newUser
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - rename
+      responses:
+        '201':
+          description: Success. Corresponding task id is returned.
+        '400':
+          description: Error in the request. Details can be found in the reported error
+  /users/{username}/identities:
+    get:
+      summary: Retrieve the user identities
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: default
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: The list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    id:
+                      type: string
+                    mayDelete:
+                      type: boolean
+                    textSignature:
+                      type: string
+                    htmlSignature:
+                      type: string
+                    sortOrder:
+                      type: integer
+                    bcc:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          name:
+                            type: string
+                    replyTo:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          name:
+                            type: string
+    post:
+      summary: Create a JMAP user identity
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                mayDelete:
+                  type: boolean
+                htmlSignature:
+                  type: string
+                textSignature:
+                  type: string
+                bcc:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                replyTo:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                sortOrder:
+                  type: integer
+      responses:
+        '201':
+          description: The new identity was successfully created
+        '404':
+          description: The username is unknown
+        '400':
+          description: The payload is invalid
+  /users/{username}/identities/{identityId}:
+    put:
+      summary: Update a JMAP user identity
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: identityId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                htmlSignature:
+                  type: string
+                textSignature:
+                  type: string
+                bcc:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                replyTo:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                sortOrder:
+                  type: integer
+      responses:
+        '204':
+          description: The identity was successfully updated
+        '404':
+          description: The username is unknown
+        '400':
+          description: The payload is invalid

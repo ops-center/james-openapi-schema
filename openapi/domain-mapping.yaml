@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: Domain Mapping API
+  version: 1.0.0
+paths:
+  /domainMappings:
+    get:
+      summary: List all domain mappings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                    format: hostname
+                    example:
+                      - "firstDestination.com"
+                      - "secondDestination.net"
+    put:
+      summary: Add a domain mapping
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              format: hostname
+              example: "destination.tld"
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: |
+            The fromDomain resource name is invalid
+            The destination domain specified in the body is invalid
+    delete:
+      summary: Remove a domain mapping
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              format: hostname
+              example: "destination.tld"
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: |
+            The fromDomain resource name is invalid
+            The destination domain specified in the body is invalid
+  /domainMappings/{fromDomain}:
+    get:
+      summary: List all destination domains for a source domain
+      parameters:
+        - name: fromDomain
+          in: path
+          description: Source domain name
+          required: true
+          schema:
+            type: string
+            format: hostname
+          example: "sourceDomain.tld"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: hostname
+                  example:
+                    - "firstDestination.com"
+                    - "secondDestination.com"
+        '400':
+          description: The fromDomain resource name is invalid
+        '404':
+          description: The fromDomain resource name is not found

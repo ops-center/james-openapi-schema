@@ -1,0 +1,85 @@
+openapi: 3.0.0
+info:
+  title: Address Mapping API
+  version: 1.0.0
+paths:
+  /mappings:
+    get:
+      summary: List all address mappings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mappingSource:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [Alias, Address, Domain, Error, Forward, Group, Regex]
+                        mapping:
+                          type: string
+                example:
+                  alias@domain.tld:
+                    - type: Alias
+                      mapping: user@domain.tld
+                    - type: Group
+                      mapping: group-user@domain.tld
+                  aliasdomain.tld:
+                    - type: Domain
+                      mapping: realdomain.tld
+                  group@domain.tld:
+                    - type: Address
+                      mapping: user@domain.tld
+    post:
+      summary: Add an address mapping
+      parameters:
+        - name: mappingSource
+          in: path
+          description: Mapping source (recipient address)
+          required: true
+          schema:
+            type: string
+            example: "alias@domain.tld"
+        - name: destinationAddress
+          in: path
+          description: Mapping destination (address)
+          required: true
+          schema:
+            type: string
+            example: "user@domain.tld"
+      responses:
+        '204':
+          description: Action successfully performed
+        '400':
+          description: Invalid parameters
+        '409':
+          description: The creation of the address mapping would lead to a loop and cannot be performed
+  /mappings/address/{mappingSource}/targets/{destinationAddress}:
+    delete:
+      summary: Remove an address mapping
+      parameters:
+        - name: mappingSource
+          in: path
+          description: Mapping source (recipient address)
+          required: true
+          schema:
+            type: string
+            example: "alias@domain.tld"
+        - name: destinationAddress
+          in: path
+          description: Mapping destination (address)
+          required: true
+          schema:
+            type: string
+            example: "user@domain.tld"
+      responses:
+        '204':
+          description: Action successfully performed
+        '400':
+          description: Invalid parameters

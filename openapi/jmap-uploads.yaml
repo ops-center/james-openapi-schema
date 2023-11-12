@@ -1,0 +1,50 @@
+openapi: 3.0.0
+info:
+  title: JMAP Upload Administration API
+  version: 1.0.0
+paths:
+  /jmap/uploads:
+    delete:
+      summary: Clean upload repository
+      parameters:
+        - in: query
+          name: scope
+          required: true
+          schema:
+            type: string
+            enum: [expired]
+          description: Specifies the scope of cleanup (e.g., "expired" uploads)
+      responses:
+        '201':
+          description: Task scheduled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                    description: Identifier of the scheduled task
+        '400':
+          description: Invalid scope parameter value
+      requestBody:
+        description: Task details
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:
+                  type: string
+                  enum: [expired]
+                  description: Specifies the scope of cleanup (e.g., "expired" uploads)
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: Timestamp of the task creation
+                type:
+                  type: string
+                  example: UploadRepositoryCleanupTask
+                  description: Type of the task
+

@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Blob Garbage Collection API
+  version: 1.0.0
+paths:
+  /blobs:
+    delete:
+      summary: Run blob garbage collection
+      parameters:
+        - in: query
+          name: scope
+          required: true
+          schema:
+            type: string
+            enum: [unreferenced]
+          description: Specifies the scope of garbage collection (e.g., "unreferenced" blobs)
+        - in: query
+          name: associatedProbability
+          schema:
+            type: number
+            format: double
+            minimum: 0
+            maximum: 1
+            default: 0.01
+            description: Targeted false positive rate for the bloom filter
+        - in: query
+          name: expectedBlobCount
+          schema:
+            type: integer
+            minimum: 1
+            default: 1000000
+            description: Expected count of blobs used to size the bloom filters
+      responses:
+        '200':
+          description: Blob garbage collection task created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  referenceSourceCount:
+                    type: integer
+                    description: Count of distinct blob references encountered while populating the bloom filter
+                  blobCount:
+                    type: integer
+                    description: Count of blobs tried against the bloom filter
+                  gcedBlobCount:
+                    type: integer
+                    description: Count of blobs that were garbage collected
+                  bloomFilterExpectedBlobCount:
+                    type: integer
+                    description: Supplied expectedBlobCount query parameter
+                  bloomFilterAssociatedProbability:
+                    type: number
+                    format: double
+                    description: Supplied associatedProbability query parameter

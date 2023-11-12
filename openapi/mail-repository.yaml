@@ -1,0 +1,120 @@
+openapi: 3.0.0
+info:
+  title: Mail Repository API
+  version: 1.0.0
+paths:
+  /mailRepositories/{encodedPathOfTheRepository}:
+    put:
+      summary: Create a mail repository
+      parameters:
+        - name: encodedPathOfTheRepository
+          in: path
+          description: Encoded resource path of the created mail repository
+          required: true
+          schema:
+            type: string
+            example: "mailRepo"
+        - name: protocol
+          in: query
+          description: Protocol of the mail repository
+          required: true
+          schema:
+            type: string
+            example: "file"
+      responses:
+        '204':
+          description: The repository is created
+    get:
+      summary: Getting additional information for a mail repository
+      parameters:
+        - name: encodedPathOfTheRepository
+          in: path
+          description: Encoded resource path of an existing mail repository
+          required: true
+          schema:
+            type: string
+            example: "var%2Fmail%2Ferror%2F"
+      responses:
+        '200':
+          description: Additional information for that repository
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  repository:
+                    type: string
+                  path:
+                    type: string
+                  size:
+                    type: integer
+        '404':
+          description: This repository cannot be found
+  /mailRepositories:
+    get:
+      summary: Listing mail repositories
+      responses:
+        '200':
+          description: The list of mail repositories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    repository:
+                      type: string
+                    path:
+                      type: string
+                example:
+                  - repository: "var/mail/error/"
+                    path: "var%2Fmail%2Ferror%2F"
+                  - repository: "var/mail/relay-denied/"
+                    path: "var%2Fmail%2Frelay-denied%2F"
+                  - repository: "var/mail/spam/"
+                    path: "var%2Fmail%2Fspam%2F"
+                  - repository: "var/mail/address-error/"
+                    path: "var%2Fmail%2Faddress-error%2F"
+  /mailRepositories/{encodedPathOfTheRepository}/mails:
+    get:
+      summary: Listing mails contained in a mail repository
+      parameters:
+        - name: encodedPathOfTheRepository
+          in: path
+          description: Encoded resource path of an existing mail repository
+          required: true
+          schema:
+            type: string
+            example: "var%2Fmail%2Ferror%2F"
+        - name: limit
+          in: query
+          description: Limit the number of returned elements
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - name: offset
+          in: query
+          description: Skip the specified number of elements
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      responses:
+        '200':
+          description: The list of mail keys contained in that mail repository
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - "mail-key-1"
+                  - "mail-key-2"
+                  - "mail-key-3"
+        '400':
+          description: This repository can not be found

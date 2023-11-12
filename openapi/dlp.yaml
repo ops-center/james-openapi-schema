@@ -1,0 +1,102 @@
+openapi: 3.0.0
+info:
+  title: DLP Configuration API
+  version: 1.0.0
+paths:
+  /dlp/rules/{senderDomain}:
+    get:
+      summary: List DLP configuration by sender domain
+      parameters:
+        - in: path
+          name: senderDomain
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of DLP configuration items
+        '400':
+          description: Invalid senderDomain or payload in request
+        '404':
+          description: The domain does not exist
+    put:
+      summary: Store DLP configuration by sender domain
+      parameters:
+        - in: path
+          name: senderDomain
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Unique identifier of the configuration item
+                      expression:
+                        type: string
+                        description: Regular expression to match contents of targets
+                      explanation:
+                        type: string
+                        description: Description of the configuration item
+                      targetsSender:
+                        type: boolean
+                        description: Indicates if the expression should be applied to the sender and from headers of the mail
+                      targetsContent:
+                        type: boolean
+                        description: Indicates if the expression should be applied to the subject headers and textual bodies of the mail
+                      targetsRecipients:
+                        type: boolean
+                        description: Indicates if the expression should be applied to the recipients of the mail
+      responses:
+        '204':
+          description: List of DLP configuration items is stored
+        '400':
+          description: Invalid senderDomain or payload in request
+        '404':
+          description: The domain does not exist
+    delete:
+      summary: Remove DLP configuration by sender domain
+      parameters:
+        - in: path
+          name: senderDomain
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: DLP configuration is removed
+        '400':
+          description: Invalid senderDomain or payload in request
+        '404':
+          description: The domain does not exist
+  /dlp/rules/{senderDomain}/rules/{ruleId}:
+    get:
+      summary: Fetch a DLP configuration item by sender domain and rule id
+      parameters:
+        - in: path
+          name: senderDomain
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: ruleId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A DLP configuration item is returned
+        '400':
+          description: Invalid senderDomain or payload in request
+        '404':
+          description: The domain and/or the rule does not exist

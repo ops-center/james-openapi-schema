@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: Domain Administration API
+  version: 1.0.0
+paths:
+  /domains/{domainToBeCreated}:
+    put:
+      summary: Create a domain
+      operationId: createDomain
+      parameters:
+        - name: domainToBeCreated
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the domain to be created
+      responses:
+        '204':
+          description: The domain was successfully added
+        '400':
+          description: The domain name is invalid
+  /domains/{domainToBeDeleted}:
+    delete:
+      summary: Delete a domain
+      operationId: deleteDomain
+      parameters:
+        - name: domainToBeDeleted
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the domain to be deleted
+      responses:
+        '204':
+          description: The domain was successfully removed
+  /domains/{domainName}:
+    get:
+      summary: Test if a domain exists
+      operationId: testDomainExists
+      parameters:
+        - name: domainName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the domain to be tested
+      responses:
+        '204':
+          description: The domain exists
+        '404':
+          description: The domain does not exist
+  /domains:
+    get:
+      summary: Get the list of domains
+      operationId: getDomainList
+      responses:
+        '200':
+          description: The domain list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /domains/{domainName}/aliases:
+    get:
+      summary: Get the list of aliases for a domain
+      operationId: getDomainAliases
+      parameters:
+        - name: domainName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the domain to retrieve aliases for
+      responses:
+        '200':
+          description: The domain aliases were successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DomainAlias'
+        '400':
+          description: destination.domain.tld has an invalid syntax
+        '404':
+          description: destination.domain.tld is not part of handled domains and does not have local domains as aliases.
+    put:
+      summary: Create an alias for a domain
+      operationId: createDomainAlias
+      parameters:
+        - name: domainName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the destination domain for the alias
+        - name: sourceDomainName
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Name of the source domain for the alias
+      responses:
+        '204':
+          description: The redirection now exists
+        '400':
+          description: source.domain.tld or destination.domain.tld have an invalid syntax
+        '404':
+          description: source.domain.tld is not part of handled domains
+    delete:
+      summary: Delete an alias for a domain
+      operationId: deleteDomainAlias
+      parameters:
+        - name: domainName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the destination domain for the alias
+        - name: sourceDomainName
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Name of the source domain for the alias
+      responses:
+        '204':
+          description: The redirection now no longer exists
+        '400':
+          description: source.domain.tld or destination.domain.tld have an invalid syntax
+        '404':
+          description: source.domain.tld is not part of handled domains
+  /domains/{domainToBeUsed}:
+    post:
+      summary: Delete all users data of a domain
+      operationId: deleteUserDataOfDomain
+      parameters:
+        - name: domainToBeUsed
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the domain to delete user data from
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - deleteData
+              required:
+                - action
+      responses:
+        '201':
+          description: Success. Corresponding task id is returned
+        '400':
+          description: Error in the request. Details can be found in the reported error
+components:
+  schemas:
+    DomainAlias:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Source domain alias

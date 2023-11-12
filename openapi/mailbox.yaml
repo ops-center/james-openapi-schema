@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Mailboxes API
+  version: 1.0.0
+paths:
+  /mailboxes:
+    post:
+      summary: Perform actions on mailboxes
+      parameters:
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of actions to perform on mailboxes
+      responses:
+        '201':
+          description: Success. Task ID is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+        '400':
+          description: Error in the request. Details can be found in the reported error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /mailboxes/{mailboxId}:
+    post:
+      summary: Reindex a mailbox
+      parameters:
+        - name: mailboxId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the mailbox to reindex
+        - name: task
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The reindexing task to perform
+        - name: messagesPerSecond
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+          description: The rate at which messages should be processed per second
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [rebuildAll, rebuildAllNoCleanup, fixOutdated]
+          description: The reindexing mode used
+      responses:
+        '201':
+          description: Success. Task ID is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+        '400':
+          description: Error in the request. Details can be found in the reported error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

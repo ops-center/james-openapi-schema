@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: Ghost Mailbox Correction API
+  version: 1.0.0
+paths:
+  /cassandra/mailbox/merging:
+    post:
+      summary: Correct ghost mailbox by merging
+      requestBody:
+        description: Parameters for merging mailboxes
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mergeOrigin:
+                  type: string
+                  description: The ID of the mailbox to be merged (ghosted mailbox)
+                mergeDestination:
+                  type: string
+                  description: The ID of the destination mailbox (new mailbox)
+              example:
+                mergeOrigin: "{id1}"
+                mergeDestination: "{id2}"
+      responses:
+        '201':
+          description: Task generation succeeded. Corresponding task ID is returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                  type:
+                    type: string
+                  additionalInformation:
+                    type: object
+                    properties:
+                      oldMailboxId:
+                        type: string
+                      newMailboxId:
+                        type: string
+                      totalMessageCount:
+                        type: integer
+                      messageMovedCount:
+                        type: integer
+                      messageFailedCount:
+                        type: integer
+                    example:
+                      oldMailboxId: "5641376-02ed-47bd-bcc7-76ff6262d92a"
+                      newMailboxId: "4555159-52ae-895f-ccb7-586a4412fb50"
+                      totalMessageCount: 1
+                      messageMovedCount: 1
+                      messageFailedCount: 0
+        '400':
+          description: Unable to parse the request body.

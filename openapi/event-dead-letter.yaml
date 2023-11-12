@@ -1,0 +1,142 @@
+openapi: 3.0.0
+info:
+  title: Event Dead Letter Administration API
+  version: 1.0.0
+paths:
+  /events/deadLetter/groups:
+    get:
+      summary: List mailbox listener groups
+      responses:
+        '200':
+          description: Success. A list of group names is returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      requestBody:
+        required: false
+    post:
+      summary: Redeliver all events
+      responses:
+        '201':
+          description: Task created successfully. The taskId of the created task is returned.
+        '400':
+          description: Invalid action argument
+  /events/deadLetter/groups/{groupName}:
+    get:
+      summary: List failed events for a given group
+      parameters:
+        - in: path
+          name: groupName
+          required: true
+          schema:
+            type: string
+          description: The name of the mailbox listener group
+      responses:
+        '200':
+          description: Success. A list of insertion ids is returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Invalid group name
+    delete:
+      summary: Delete all events of a group
+      parameters:
+        - in: path
+          name: groupName
+          required: true
+          schema:
+            type: string
+          description: The name of the mailbox listener group
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Invalid group name
+  /events/deadLetter/groups/{groupName}/{insertionId}:
+    get:
+      summary: Get event details
+      parameters:
+        - in: path
+          name: groupName
+          required: true
+          schema:
+            type: string
+          description: The name of the mailbox listener group
+        - in: path
+          name: insertionId
+          required: true
+          schema:
+            type: string
+          description: The insertion ID of the event
+      responses:
+        '200':
+          description: Success. A JSON representing this event is returned.
+        '400':
+          description: Invalid group name or insertionId
+        '404':
+          description: No event with this insertionId
+    delete:
+      summary: Delete an event
+      parameters:
+        - in: path
+          name: groupName
+          required: true
+          schema:
+            type: string
+          description: The name of the mailbox listener group
+        - in: path
+          name: insertionId
+          required: true
+          schema:
+            type: string
+          description: The insertion ID of the event
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Invalid group name or insertionId
+  /events/deadLetter/groups/{groupName}/reDeliver:
+    post:
+      summary: Redeliver group events
+      parameters:
+        - in: path
+          name: groupName
+          required: true
+          schema:
+            type: string
+          description: The name of the mailbox listener group
+      responses:
+        '201':
+          description: Task created successfully. The taskId of the created task is returned.
+        '400':
+          description: Invalid group name or action argument
+  /events/deadLetter/groups/{groupName}/{insertionId}/reDeliver:
+    post:
+      summary: Redeliver a single event
+      parameters:
+        - in: path
+          name: groupName
+          required: true
+          schema:
+            type: string
+          description: The name of the mailbox listener group
+        - in: path
+          name: insertionId
+          required: true
+          schema:
+            type: string
+          description: The insertion ID of the event
+      responses:
+        '201':
+          description: Task created successfully. The taskId of the created task is returned.
+        '400':
+          description: Invalid group name, insertion id, or action argument
+        '404':
+          description: No event with this insertionId

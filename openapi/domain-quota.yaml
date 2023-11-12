@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  title: Quota Management API
+  version: 1.0.0
+paths:
+  /quota/domains/{domainToBeUsed}:
+    get:
+      summary: Get the quota for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success. The domain's quota details are returned
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.
+
+    put:
+      summary: Update the quota for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The new quota for the domain
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+                size:
+                  type: integer
+              example:
+                count: 52
+                size: 42
+      responses:
+        '204':
+          description: The quota has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.
+
+  /quota/domains/{domainToBeUsed}/count:
+    get:
+      summary: Get the quota count for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success. The domain's quota count is returned
+        '204':
+          description: No quota count limit is defined at the domain level for this domain
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.
+
+    put:
+      summary: Update the quota count for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The new quota count for the domain
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+              minimum: -1
+              example: 52
+      responses:
+        '204':
+          description: The quota count has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.
+
+    delete:
+      summary: Delete the quota count for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The quota count has been updated to an unlimited value
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.
+
+  /quota/domains/{domainToBeUsed}/size:
+    get:
+      summary: Get the quota size for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success. The domain's quota size is returned
+        '204':
+          description: No quota size limit is defined at the domain level for this domain
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.
+
+    put:
+      summary: Update the quota size for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The new quota size for the domain
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+              minimum: -1
+              example: 52
+      responses:
+        '204':
+          description: The quota size has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.
+
+    delete:
+      summary: Delete the quota size for a domain
+      parameters:
+        - in: path
+          name: domainToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The quota size has been updated to an unlimited value
+        '404':
+          description: The domain does not exist
+        '405':
+          description: Domain Quota configuration not supported when virtual hosting is deactivated.

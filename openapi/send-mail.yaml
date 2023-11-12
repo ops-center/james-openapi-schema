@@ -1,0 +1,20 @@
+openapi: 3.0.0
+info:
+  title: Email Sending API
+  version: 1.0.0
+paths:
+  /mail-transfer-service:
+    post:
+      summary: Send email
+      requestBody:
+        required: true
+        content:
+          message/rfc822:
+            schema:
+              type: string
+              description: MIME message representing the email
+      responses:
+        '200':
+          description: Email sent successfully
+        '400':
+          description: Invalid request

@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: HealthCheck API
+  version: 1.0.0
+paths:
+  /healthcheck:
+    get:
+      summary: Check all components
+      operationId: checkAllComponents
+      responses:
+        '200':
+          description: Health check results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                    description: Aggregated status of all checks
+                  checks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/HealthCheckResult'
+  /healthcheck/checks:
+    get:
+      summary: List all health checks
+      operationId: listAllHealthChecks
+      responses:
+        '200':
+          description: List of available health checks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HealthCheckInfo'
+  /healthcheck/checks/{componentName}:
+    get:
+      summary: Check single component
+      operationId: checkSingleComponent
+      parameters:
+        - name: componentName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: URL encoded name of the component
+      responses:
+        '200':
+          description: Health check result for the component
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResult'
+        '404':
+          description: Component not found
+        '503':
+          description: Unhealthy status for the component
+components:
+  schemas:
+    HealthCheckInfo:
+      type: object
+      properties:
+        componentName:
+          type: string
+        escapedComponentName:
+          type: string
+    HealthCheckResult:
+      type: object
+      properties:
+        componentName:
+          type: string
+        escapedComponentName:
+          type: string
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        cause:
+          type: string
+          nullable: true

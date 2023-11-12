@@ -1,0 +1,120 @@
+openapi: 3.0.0
+info:
+  title: Global Quota Management API
+  version: 1.0.0
+paths:
+  /quota:
+    get:
+      summary: Get the global quota
+      responses:
+        '200':
+          description: Success. The global quota details are returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  size:
+                    type: integer
+                example:
+                  count: 252
+                  size: 242
+
+    put:
+      summary: Update the global quota
+      requestBody:
+        description: The new global quota
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+                size:
+                  type: integer
+              example:
+                count: 52
+                size: 42
+      responses:
+        '204':
+          description: The global quota has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+
+  /quota/count:
+    get:
+      summary: Get the global quota count
+      responses:
+        '200':
+          description: Success. The global quota count is returned
+          content:
+            application/json:
+              schema:
+                type: integer
+                example: 52
+        '204':
+          description: No quota count limit is defined at the global level
+
+    put:
+      summary: Update the global quota count
+      requestBody:
+        description: The new global quota count
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+              minimum: -1
+              example: 52
+      responses:
+        '204':
+          description: The global quota count has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+
+    delete:
+      summary: Delete the global quota count
+      responses:
+        '204':
+          description: The global quota count has been updated to an unlimited value
+
+  /quota/size:
+    get:
+      summary: Get the global quota size
+      responses:
+        '200':
+          description: Success. The global quota size is returned
+          content:
+            application/json:
+              schema:
+                type: integer
+                example: 52
+        '204':
+          description: No quota size limit is defined at the global level
+
+    put:
+      summary: Update the global quota size
+      requestBody:
+        description: The new global quota size
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+              minimum: -1
+              example: 52
+      responses:
+        '204':
+          description: The global quota size has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+
+    delete:
+      summary: Delete the global quota size
+      responses:
+        '204':
+          description: The global quota size has been updated to an unlimited value

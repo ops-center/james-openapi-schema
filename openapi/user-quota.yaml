@@ -1,0 +1,227 @@
+openapi: 3.0.0
+info:
+  title: Quota Management API
+  version: 1.0.0
+paths:
+  /quota/users/{usernameToBeUsed}:
+    get:
+      summary: Get the quota for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success. The user's quota details are returned
+        '404':
+          description: The user does not exist
+
+    put:
+      summary: Update the quota for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The new quota for the user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+                size:
+                  type: integer
+              example:
+                count: 52
+                size: 42
+      responses:
+        '204':
+          description: The quota has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+        '404':
+          description: The user does not exist
+
+  /quota/users/{usernameToBeUsed}/count:
+    get:
+      summary: Get the quota count for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success. The user's quota count is returned
+        '204':
+          description: No quota count limit is defined for the user
+        '404':
+          description: The user does not exist
+
+    put:
+      summary: Update the quota count for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The new quota count for the user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+              minimum: -1
+              example: 52
+      responses:
+        '204':
+          description: The quota count has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+        '404':
+          description: The user does not exist
+
+    delete:
+      summary: Delete the quota count for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The quota count has been updated to an unlimited value
+        '404':
+          description: The user does not exist
+
+  /quota/users/{usernameToBeUsed}/size:
+    get:
+      summary: Get the quota size for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success. The user's quota size is returned
+        '204':
+          description: No quota size limit is defined for the user
+        '404':
+          description: The user does not exist
+
+    put:
+      summary: Update the quota size for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The new quota size for the user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+              minimum: -1
+              example: 42
+      responses:
+        '204':
+          description: The quota size has been updated
+        '400':
+          description: The body is not a positive integer or an unlimited value (-1)
+        '404':
+          description: The user does not exist
+
+    delete:
+      summary: Delete the quota size for a user
+      parameters:
+        - in: path
+          name: usernameToBeUsed
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The quota size has been updated to an unlimited value
+        '404':
+          description: The user does not exist
+
+  /quota/users:
+    get:
+      summary: Search users by quota ratio
+      parameters:
+        - in: query
+          name: minOccupationRatio
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+          description: The minimum occupation ratio of users to be returned
+        - in: query
+          name: maxOccupationRatio
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+          description: The maximum occupation ratio of users to be returned
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The maximum number of users to be returned
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of users to skip
+        - in: query
+          name: domain
+          schema:
+            type: string
+          description: The domain of users to be returned
+      responses:
+        '200':
+          description: List of users with quota details
+        '400':
+          description: Validation issues with parameters
+    post:
+      summary: Recompute current quotas for users
+      parameters:
+        - in: query
+          name: task
+          required: true
+          schema:
+            type: string
+            enum: [RecomputeCurrentQuotas]
+      requestBody:
+        description: Additional task options
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usersPerSecond:
+                  type: integer
+                  minimum: 1
+              example:
+                usersPerSecond: 20
+      responses:
+        '201':
+          description: Success. Corresponding task ID is returned
+        '400':
+          description: Error in the request. Details can be found in the reported error
